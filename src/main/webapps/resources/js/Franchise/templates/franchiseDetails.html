@@ -1,0 +1,269 @@
+<div ng-controller="franchiseDetailsCtrl">
+	<h3 ng-bind='name' class="title"></h3>
+	<form name="FranchiseeInfo" ng-init="submitted=false;" novalidate>
+		<div class="CollapseDiv ">
+			<div class="subheaderDiv">
+				<h5 class="subheaderCustomer">
+					<a class="linkCursor" ng-click="collapsedInfo()"><i id="up"
+						ng-show="iscollapsedInfo" class="glyphicon glyphicon-chevron-up"></i><i
+						class="glyphicon glyphicon-chevron-down" id="down"
+						ng-show="!iscollapsedInfo"></i>Info</a>
+				</h5>
+
+				<div class="details">
+					<div collapse="!iscollapsedInfo">
+						<div class="row">
+							<div class="col-xs-6">
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">Name*</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' :(FranchiseeInfo.name.$error.pattern && submitted == true) || (FranchiseeInfo.name.$error.required && submitted == true) }">
+										<input type="text" class="form-control"
+											ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/"
+											ng-model="franchise.name" name="name" maxlength=100
+											ng-disabled="fieldDisabled" required>
+										<p
+											ng-show="(FranchiseeInfo.name.$error.pattern && submitted == true)"
+											class="help-block">Invalid name.</p>
+
+										<p
+											ng-show="(FranchiseeInfo.name.$error.required && submitted == true)"
+											class="help-block">Name is required.</p>
+									</div>
+								</div>
+
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">Address*</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (FranchiseeInfo.address.$error.pattern  && submitted==true) || (FranchiseeInfo.address.$error.required && submitted==true) }">
+										<input id="franchiseeAddress" type="text" class="form-control"
+											ng-model="franchise.address1" name="address" maxlength=256
+											ng-disabled="fieldDisabled" required autofocus>
+										<p
+											ng-show="(FranchiseeInfo.address.$error.pattern  && submitted==true)"
+											class="help-block">Invalid address.</p>
+										<p
+											ng-show="(FranchiseeInfo.address.$error.required && submitted==true)"
+											class="help-block">Address is required.</p>
+									</div>
+								</div>
+
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">City*</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (FranchiseeInfo.city.$error.pattern && submitted==true) ||  (FranchiseeInfo.city.$error.required && submitted==true)}">
+										<input type="text" class="form-control"
+											ng-model="franchise.city" maxlength=32
+											ng-pattern="/^[a-zA-Z\s]*$/" name="city"
+											ng-disabled="fieldDisabled" required>
+										<p
+											ng-show="(FranchiseeInfo.city.$error.pattern && submitted==true)"
+											class="help-block">Invalid city.</p>
+										<p
+											ng-show="(FranchiseeInfo.city.$error.required && submitted==true)"
+											class="help-block">City is required.</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-xs-6">
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">Franchisee Status*</label>
+									</div>
+									<div class="col-xs-7">
+										<div class="btn-group" uib-dropdown uib-keyboard-nav
+											is-open="status2.isopen" style="width: 100%">
+											<button id="records-button" type="button"
+												class="btn btn-default form-control" uib-dropdown-toggle
+												ng-disabled="fieldDisabled || !isFTAdmin">
+												<span class="pull-left">{{currentStatus.name}}</span>&nbsp;<span
+													class="pull-right caret dropdown_caret"></span>
+											</button>
+											<ul uib-dropdown-menu role="menu"
+												aria-labelledby="records-button">
+												<li ng-click="currentStatus = {id : 1,name : 'ACTIVE'}"><a
+													href="">ACTIVE</a></li>
+												<li ng-click="currentStatus = {id : 2,name : 'INACTIVE'}"><a
+													href="">INACTIVE</a></li>
+												<!-- <li ng-click="currentStatus = {id : 3,name : 'DELETE'}"><a
+													href="">DELETE</a></li> -->
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">Franchisee Creation Date</label>
+									</div>
+									<div class="col-xs-7">
+										<input type="text" class="form-control"
+											uib-datepicker-popup="dd/MM/yyyy"
+											ng-model="franchise.createdDate" name="createdDate"
+											ng-disabled="true">
+									</div>
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">State*</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (FranchiseeInfo.State.$error.pattern && submitted==true) ||  (FranchiseeInfo.State.$error.required && submitted==true)}">
+										<input type="text" class="form-control"
+											ng-model="franchise.state" maxlength=32
+											ng-pattern="/^[a-zA-Z\s]*$/" name="State"
+											ng-disabled="fieldDisabled" required>
+										<p
+											ng-show="(FranchiseeInfo.State.$error.pattern && submitted==true)"
+											class="help-block">Invalid state.</p>
+										<p
+											ng-show="(FranchiseeInfo.State.$error.required && submitted==true)"
+											class="help-block">State is required.</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<div collapse="!iscollapsedInfo">
+			<button class="btn btn-default editBtn"
+				ng-click="enableFormfilelds()" ng-hide="editDisabled">Edit</button>
+			<!-- <button class="btn btn-default"
+				style="width: 142px; margin-left: 2%; padding: 0%; height: 28px; text-align: center"
+				ng-click="saveInfo($event)" ng-disabled="saveDisabled">Save</button>
+			<br> <br> -->
+			<button class="btn btn-default editBtn" ng-hide="saveDisabled"
+				ng-click="saveInfo($event)">Save</button>
+			<button class="btn btn-default editBtn margin_left_1perc"
+				ng-click="cancelInfo()" ng-hide="saveDisabled">Cancel</button>
+		</div>
+</div>
+</form>
+<form name="FranchiseeContact" ng-init="contactsubmitted=false;"
+	novalidate>
+	<div class="CollapseDiv ">
+		<div class="subheaderDiv">
+			<h5 class="subheaderCustomer">
+				<a class="linkCursor" ng-click="collapsedContacts()"><i id="up"
+					ng-show="iscollapsedContacts"
+					class="glyphicon glyphicon-chevron-up"></i><i
+					class="glyphicon glyphicon-chevron-down" id="down"
+					ng-show="!iscollapsedContacts"></i>Contact</a>
+			</h5>
+
+			<div class="details">
+				<div collapse="!iscollapsedContacts">
+					<div class="row form-group">
+						<div class="col-xs-12">
+							<label for="primaryContact" class="contact">Primary
+								Contact</label>
+						</div>
+					</div>
+					<div class="row">
+
+						<div class="col-xs-6">
+
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label for="name">Name*</label>
+								</div>
+								<div class="col-xs-7"
+									ng-class="{ 'has-error' : (FranchiseeContact.name.$error.pattern && contactsubmitted == true) || (FranchiseeContact.name.$error.required && contactsubmitted == true)  }">
+									<input id="contactName" type="text" maxlength=100
+										class="form-control elipsis" ng-pattern="/^[a-zA-Z\s]*$/"
+										ng-keyup="setModified()" ng-model="primaryContact.name"
+										ng-disabled="fieldDisabledContact" name="name"
+										ng-required="primaryContact.cellPhone || primaryContact.email || isContactInfoExist"
+										autofocus>
+									<p
+										ng-show="(FranchiseeContact.name.$error.pattern && contactsubmitted == true)"
+										class="help-block">Invalid name.</p>
+
+									<p
+										ng-show="(FranchiseeContact.name.$error.required && contactsubmitted == true)"
+										class="help-block">Name is required.</p>
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label for="phone">Phone</label>
+								</div>
+								<div class="col-xs-7"
+									ng-class="{ 'has-error' : (FranchiseeContact.phone.$error.pattern && contactsubmitted == true) || (FranchiseeContact.phone.$error.minlength && !FranchiseeContact.phone.$error.pattern && contactsubmitted == true) }">
+									<input type="text" ng-keyup="setModified()"
+										class="form-control elipsis" ng-pattern="/^[0-9]*$/" minlength=10
+										maxlength=16 ng-disabled="fieldDisabledContact"
+										ng-model="primaryContact.cellPhone" name="phone">
+									<p
+										ng-show="(FranchiseeContact.phone.$error.pattern && contactsubmitted == true)"
+										class="help-block">Invalid phone.</p>
+									<p
+										ng-show="(FranchiseeContact.phone.$error.minlength && !FranchiseeContact.phone.$error.pattern && contactsubmitted == true)"
+										class="help-block">Phone number must have at least 10
+										characters.</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xs-6">
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label for="email">Email</label>
+								</div>
+								<div class="col-xs-7"
+									ng-class="{ 'has-error' : FranchiseeContact.email.$invalid && contactsubmitted == true }">
+									<input type="email" ng-keyup="setModified()"
+										class="form-control elipsis" ng-disabled="fieldDisabledContact"
+										maxlength=50 ng-model="primaryContact.email" name="email">
+									<p
+										ng-show="(FranchiseeContact.email.$invalid && contactsubmitted == true)"
+										class="help-block">Invalid email.</p>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div collapse="!iscollapsedContacts">
+			<button class="btn btn-default editBtn" type="button"
+				ng-click="enableFormfileldsContact()" ng-hide="editDisabledContact">Edit</button>
+			<!-- <button class="btn btn-default"
+						style="width: 142px; margin-left: 2%; padding: 0%; height: 28px; text-align: center" ng-click="saveContact($event)" ng-disabled="saveDisabledContact">Save</button>
+					<br> <br> -->
+			<button class="btn btn-default editBtn" ng-hide="saveDisabledContact"
+				ng-click="saveContact($event)">Save</button>
+			<button class="btn btn-default editBtn margin_left_1perc"
+				ng-click="cancelContactInfo()" ng-hide="saveDisabledContact">Cancel</button>
+		</div>
+	</div>
+</form>
+<div class="CollapseDiv">
+
+	<div class="siteTableContainer">
+		<h5 class="subheaderCustomer ">
+			<a class="linkCursor" ng-click="collapsedSites()"><i id="up"
+				ng-show="iscollapsedSites" class="glyphicon glyphicon-chevron-up"></i><i
+				class="glyphicon glyphicon-chevron-down" id="down"
+				ng-show="!iscollapsedSites"></i>Sites</a>
+		</h5>
+
+	</div>
+	<div ng-if="iscollapsedSites == true">
+		<div ng-include="'/core/resources/js/Common/templates/siteTable.html'"></div>
+	</div>
+</div>
+</div>

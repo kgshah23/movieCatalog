@@ -1,0 +1,491 @@
+
+<div>
+	<div class="row">
+		<div class="col-xs-5 title">Unallotted Items</div>
+		<div class="pull-right col-xs-7">
+			<div class="col-xs-2 pull-right remove_right_padding">
+				<div class="btn-group width_100perc" uib-dropdown uib-keyboard-nav
+					is-open="status1.isopen">
+					<button id="records-button" type="button"
+						class="btn btn-default form-control" uib-dropdown-toggle
+						ng-disabled="disabled">
+						<div class="row">
+							<div style="text-align : left;overflow:hidden;white-space:nowrap;text-overflow: ellipsis; "class="col-xs-8">{{countPerPage}}</div>
+							<div class="col-xs-4">
+								<span class="caret"></span>
+							</div>
+						</div>
+					</button>
+
+					<ul uib-dropdown-menu role="menu" aria-labelledby="records-button" class="scrollable-menu" style="min-width:60%;">
+						<li ng-click="countPerPage=10; refreshInventories(true);"
+							role="menuitem"><a href="">10</a></li>
+						<li ng-click="countPerPage=20; refreshInventories(true);"
+							role="menuitem"><a href="">20</a></li>
+						<li ng-click="countPerPage=50;  refreshInventories(true);"
+							role="menuitem"><a href="">50</a></li>
+						<li ng-click="countPerPage=100;  refreshInventories(true);"
+							role="menuitem"><a href="">100</a></li>
+					</ul>
+				</div>
+			</div>
+			
+			<div class="col-xs-3 pull-right remove_right_padding">
+				<div class="width_100perc" uib-dropdown uib-keyboard-nav
+					is-open="status2.isopen">
+					<input class="col-xs-12" placeholder="Location Remark" type=text ng-model="keyword" ng-change="getInventoriesByKeyword()">
+				</div>
+			</div>
+			<div class="col-xs-3 pull-right remove_right_padding">
+				<div class="btn-group width_100perc" uib-dropdown uib-keyboard-nav
+					is-open="status3.isopen">
+					<button id="records-button" type="button" class="btn btn-default form-control dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
+						<div class="row">
+							<div  style="text-align : left;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;" class="col-md-9 col-xs-3">
+								{{selectedState.name}}
+							</div>
+							<div class="col-md-3 col-xs-6">
+								<span class="caret"></span>
+							</div>
+						</div>
+
+					</button>
+					
+					</button>
+					<ul uib-dropdown-menu role="menu" aria-labelledby="records-button" class="scrollable-menu">
+						<li ng-repeat="state in states" ng-click="setSelectedState(state);refreshInventories(true);"
+							role="menuitem"><a href="">{{state.name}}</a></li>
+					</ul>
+				</div>
+			</div>
+			
+			
+
+			<div class="col-xs-4 pull-right remove_right_padding">
+				<div class="btn-group width_100perc" uib-dropdown uib-keyboard-nav
+					is-open="status4.isopen">
+					<button id="records-button" type="button" class="row btn btn-default form-control dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
+						<div class="row">
+							<div style="text-align : left;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;" class="col-xs-10">
+								{{selectedRefType.name}}
+							</div>
+							<div class="col-xs-2">
+								<span class="caret"></span>
+							</div>
+						</div>
+					</button>
+
+					<ul uib-dropdown-menu role="menu" aria-labelledby="records-button" class="scrollable-menu">
+						<li ng-repeat="refType in referanceTypes" ng-click="setSelectedRefType(refType);refreshInventories(true);"
+							role="menuitem"><a href="">{{refType.name}}</a></li>
+					</ul>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<br>
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<th ng-click="sort('Name')" class="firstTh">Inventory Name<span
+					class="glyphicon sort-icon" ng-show="sortKey=='Name'"
+					ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+				<th>Description</th>
+				<th>Device Type</th>
+				<th>State</th>
+				<th>Unique SN</th>
+				<th>Location</th>
+				<th>Location Remarks</th>
+				<th>Battery Date</th>
+				<th>Brand</th>
+				<th  class="actions_column">Actions</th>
+			</thead>
+			<tbody ng-init="setSiteNames()">
+				<tr dir-paginate="inventory in inventories | itemsPerPage: countPerPage"
+					total-items="totalInventories" current-page="pagination.current">
+					<td>{{inventory.name}}</td>
+					<td>{{inventory.description}}</td>
+					<td>{{getDeviceTypeName(inventory.deviceTypeId)}}</td>
+					<td>{{getStateName(inventory.state)}}</td>
+					<td>{{inventory.serialNumber}}</td>
+					<td ng-if="inventory.locationType != 2">{{getLocationTypeName(inventory.locationType)}}</td>
+					<td ng-if="inventory.locationType ==2"> {{inventory.sitename}}</td>
+					<td>{{inventory.locationRemarks}}</td>
+					<td>{{inventory.batteryDate | date:'dd/MM/yyyy'}}</td>
+					<td>{{inventory.brand}}</td>
+					<td>
+						<button ng-disabled="hideSelf(user.id)"
+							ng-click="open('md','editInventory.html',inventory,refreshInventories,$event);"
+							class="btn btn-default margin_left_2perc">
+							<span class="glyphicon glyphicon-edit"></span>Edit
+						</button>
+						<button
+							ng-click="open('md','deleteInventory.html',inventory,deleteInventoryCallback,$event);"
+							class="btn btn-default margin_left_2perc">
+							<span class="glyphicon glyphicon-trash"></span>Delete
+						</button>
+					</td>
+
+				</tr>
+				<tr ng-show="!inventories.length">
+					<td colspan="10" class="text-center">No Records Found</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div>
+		<button type="button" class="btn btn-default"
+			ng-click="open('md','addNewInventory.html','',refreshInventories,$event);">Add New Item
+		</button>
+		<button type="button" csv-header="csvHeaders1" ng-csv="csvInventoryUnallotted" filename="InventoryUnallotted.csv" class="margin_left_1perc btn btn-default">
+		<span class="glyphicon glyphicon-export"></span>Export to CSV
+		</button>
+		<dir-pagination-controls on-page-change="pageChange=true; refreshInventories();"
+			template-url="/core/resources/js/Common/templates/dirPagination.html"></dir-pagination-controls>
+	</div>
+</div>
+<script type="text/ng-template" id="addNewInventory.html" >
+	<div class="modal-header" ng-init="isShowCustomerNames=false;isShowFranchiseNames=false">
+		<span class="modal-title">Add New Item<span ng-click="cancel()" class=" glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form  name="addNewInventory" ng-keypress="enterKeyEvent($event,'ADD_INVENTORY')" ng-init="submitted=false;">
+			<div class="row form-group">
+				<label class="col-xs-3">Name*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (addNewInventory.name.$error.pattern && submitted==true) || (addNewInventory.name.$error.required && submitted==true)}">
+					<input type="text" maxlength=50 name="name" ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/" class="form-control elipsis" ng-model="name" required autofocus>
+					<p ng-show="(addNewInventory.name.$error.pattern && submitted==true)"  class="help-block">Invalid name.</p>
+					<p ng-show="(addNewInventory.name.$error.required && submitted==true)"  class="help-block">Name is required.</p>
+				</div>
+			</div>
+			<div class="row form-group">
+				<label class="col-xs-3">Description</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : addNewInventory.description.$invalid && !addNewInventory.description.$pristine }">
+					<input type="text" name="description" class="form-control" ng-model="description" autofocus>
+					<p ng-show="addNewInventory.description.$invalid && !addNewInventory.description.$pristine"  class="help-block">Invalid description.</p>
+				</div>
+			</div>
+			<div class="row form-group">
+				<label class="col-xs-3">Type</label>
+				<div ng-init="getDeviceTypes()" class="col-xs-9">
+					<div uib-dropdown uib-keyboard-nav is-open="status2.isopen">
+						<button id="records-button" type="button"
+							class="form-control" uib-dropdown-toggle
+							ng-disabled="disabled">
+							<span class="pull-left">{{currentDeviceType.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+						</button>
+						<ul uib-dropdown-menu role="menu" aria-labelledby="records-button" class="scrollable-menu">
+							<li ng-repeat="deviceType in deviceTypes"><a href="" ng-click="changeDeviceType(deviceType)">{{deviceType.name}}</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+<!--
+			<div ng-show='currentDeviceType.category==1' class="row form-group">
+				<label class="col-xs-3">Username*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (addNewInventory.username.$error.pattern && submitted==true) ||  (addNewInventory.username.$error.required && submitted==true)}">
+					<input type="text" maxlength=100 ng-pattern="/^[a-zA-Z0-9_]*$/" name="username" class="form-control" ng-model="username" ng-required="currentDeviceType.category==1">
+					<p ng-show="(addNewInventory.username.$error.pattern && submitted==true)"  class="help-block">Invalid username.</p>
+					<p ng-show="(addNewInventory.username.$error.required && submitted==true)"  class="help-block">Username is required.</p>
+				</div>
+			</div>
+			<div ng-show='currentDeviceType.category==1' class="row form-group">
+				<label class="col-xs-3">Password*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (addNewInventory.password.$error.pattern && submitted==true) || (addNewInventory.password.$error.required && submitted==true) || (addNewInventory.password.$error.minlength && submitted==true) }">
+					<input type="password" minlength="8" maxlength="16" ng-pattern="/^\S*$/" name="password" class="form-control" ng-model="password"  ng-required="currentDeviceType.category==1">
+					<p ng-show="(addNewInventory.password.$error.pattern && submitted==true)"  class="help-block">Invalid password.</p>
+					<p ng-show="(addNewInventory.password.$error.required && submitted==true)"  class="help-block">Password is required.</p>
+					<p ng-show="(addNewInventory.password.$error.minlength && submitted==true && !addNewInventory.password.$error.pattern)"  class="help-block">Password must have at least 8 characters.</p>
+				</div>
+			</div>
+
+			<div ng-show='currentDeviceType.category==1' class="row form-group">
+				<label class="col-xs-3">Confirm Password*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (password != confirmpassword) && submitted==true }">
+					<input type="password" minlength="8" maxlength="16" ng-pattern="/^\S*$/" name="confirmpassword" class="form-control" ng-model="confirmpassword"  ng-required="currentDeviceType.category==1">
+					<p ng-show="(password != confirmpassword) && submitted==true"  class="help-block">Passwords do not match.</p>
+				</div>
+			</div>
+
+-->
+
+			<div class="row form-group">
+				<label class="col-xs-3">Unique SN*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (addNewInventory.serialNumber.$error.pattern && submitted==true) || (addNewInventory.serialNumber.$error.required && submitted==true)}">
+					<input type="text" ng-pattern="/^[a-z A-Z 0-9]*$/" maxlength=50 name="serialNumber" class="form-control" ng-model="serialNumber" required>
+					<p ng-show="(addNewInventory.serialNumber.$error.pattern && submitted==true)"  class="help-block">Invalid unique serial number.</p>
+					<p ng-show="(addNewInventory.serialNumber.$error.required && submitted==true)"  class="help-block">Unique serial number is required.</p>
+				</div>
+			</div>
+
+			<div class="row form-group">
+				<label class="col-xs-3">Location Remarks*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : addNewInventory.locationRemarks.$error.required && submitted==true }">
+					<input type="text" maxlength=100 name="locationRemarks" class="form-control" ng-model="locationRemarks" required>
+					<p ng-show="addNewInventory.locationRemarks.$error.required && submitted==true"  class="help-block">Location is required.</p>
+				</div>
+			</div>
+
+			<div class="row form-group">
+				<div class="col-xs-3">
+					<label for="sitePoDate">Battery Date</label>
+				</div>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (addNewInventory.batteryDate.$invalid && submitted==true) }">
+				<p class="input-group">
+					<input type="text" class="form-control"
+							ng-disabled="billingFieldDisable" ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+								uib-datepicker-popup="{{format}}" ng-model="batteryDate"
+								is-open="isOpened1" close-text="Close"
+								show-button-bar="false" name="batteryDate"
+								 datepicker-options="{ showWeeks:false }" /> <span
+								class="input-group-btn">
+								<button type="button" class="btn btn-default"
+									ng-disabled="billingFieldDisable"
+									ng-click="isOpened1 = !isOpened1;format='dd/MM/yyyy'">
+									<i class="glyphicon glyphicon-calendar"></i>
+									</button>
+								</span>
+								</p>
+					<p
+												ng-show="(addNewInventory.batteryDate.$invalid && submitted==true)"
+												class="help-block">Invalid battery date. </p>
+				</div>
+			</div>
+
+			<div class="row form-group">
+				<label class="col-xs-3">Brand</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : addNewInventory.brand.$invalid && !addNewInventory.brand.$pristine }">
+					<input type="text" maxlength=100 name="brand" class="form-control" ng-model="brand">
+					<p ng-show="addNewInventory.brand.$invalid && !addNewInventory.brand.$pristine"  class="help-block">Invalid brand.</p>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('ADD_INVENTORY')">Add</button>
+	</div>
+</script>
+<script type="text/ng-template" id="editInventory.html" >
+	<div class="modal-header" ng-init="isShowCustomerNames=false;isShowFranchiseNames=false">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Edit - {{inventoryName}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+	</div>
+	<div class="modal-body">
+		<form  name="editInventoryForm" ng-keypress="enterKeyEvent($event,'EDIT_INVENTORY')" ng-init="submitted=false;">
+			<div class="row form-group">
+				<label class="col-xs-3">Name*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editInventoryForm.name.$error.pattern && submitted==true) ||  (editInventoryForm.name.$error.required && submitted==true)}">
+					<input type="text" maxlength=50 ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/" name="name" class="form-control elipsis" ng-model="name" required autofocus>
+					<p ng-show="(editInventoryForm.name.$error.pattern && submitted==true)"  class="help-block">Invalid name.</p>
+					<p ng-show="(editInventoryForm.name.$error.required && submitted==true)"  class="help-block">Name is required.</p>
+				</div>
+			</div>
+			<div class="row form-group">
+				<label class="col-xs-3">Description</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : editInventoryForm.description.$invalid && !editInventoryForm.description.$pristine }">
+					<input type="text" name="description" class="form-control" ng-model="description" autofocus>
+					<p ng-show="editInventoryForm.description.$invalid && !editInventoryForm.description.$pristine"  class="help-block">Invalid description.</p>
+				</div>
+			</div>
+			<div class="row form-group">
+				<label class="col-xs-3">Type</label>
+				<div ng-init="getDeviceTypes()" class="col-xs-9">
+					<div uib-dropdown uib-keyboard-nav is-open="status2.isopen">
+						<button id="records-button" type="button"
+							class="form-control" uib-dropdown-toggle
+							ng-disabled="disabled">
+							<span class="pull-left">{{currentDeviceType.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+						</button>
+						<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+							<li ng-repeat="deviceType in deviceTypes"><a href="" ng-click="changeDeviceType(deviceType)">{{deviceType.name}}</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+<!--
+			<div ng-show='currentDeviceType.category==1' class="row form-group">
+				<label class="col-xs-3">Username*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editInventoryForm.username.$error.pattern && submitted==true) || (editInventoryForm.username.$error.required && submitted==true) }">
+					<input type="text" maxlength=100 ng-pattern="/^[a-zA-Z0-9_]*$/" name="username" class="form-control" ng-model="username"   ng-required="currentDeviceType.category==1">
+					<p ng-show="(editInventoryForm.username.$error.pattern && submitted==true)"  class="help-block">Invalid username.</p>
+					<p ng-show="(editInventoryForm.username.$error.required && submitted==true)"  class="help-block">Username is required.</p>
+				</div>
+			</div>
+			<div ng-show='currentDeviceType.category==1' class="row form-group">
+				<label class="col-xs-3">Password*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editInventoryForm.password.$error.pattern && submitted==true) ||  (editInventoryForm.password.$error.minlength && submitted==true && !editInventoryForm.password.$error.pattern) || (editInventoryForm.password.$error.required && submitted==true)}">
+					<input ng-change="passwordModified()" type="password" minlength="8" maxlength="16" ng-pattern="/^\S*$/" name="password" class="form-control" ng-model="password"   ng-required="currentDeviceType.category==1">
+					<p ng-show="(editInventoryForm.password.$error.pattern && submitted==true)"  class="help-block">Invalid password.</p>
+					<p ng-show="(editInventoryForm.password.$error.minlength && submitted==true && !editInventoryForm.password.$error.pattern)"  class="help-block">Password must have at least 8 characters.</p>
+					<p ng-show="(editInventoryForm.password.$error.required && submitted==true)"  class="help-block">Password is required.</p>
+				</div>
+			</div>
+
+			<div ng-show="!editInventoryForm.password.$pristine && currentDeviceType.category==1" class="row form-group">
+				<label class="col-xs-3">Confirm Password*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (password != confirmpassword) && submitted==true }">
+					<input type="password" minlength="8" maxlength="16" name="confirmpassword" class="form-control" ng-model="confirmpassword" ng-required="!editInventoryForm.password.$pristine && currentDeviceType.category==1">
+					<p ng-show="(password != confirmpassword) && submitted==true"  class="help-block">Passwords do not match.</p>
+				</div>
+			</div>
+
+-->
+
+			<div class="row form-group">
+				<label class="col-xs-3">Unique SN*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editInventoryForm.serialNumber.$error.pattern && submitted==true) || (editInventoryForm.serialNumber.$error.required && submitted==true)}">
+					<input type="text" ng-pattern="/^[a-z A-Z 0-9]*$/" maxlength=50 name="serialNumber" class="form-control" ng-model="serialNumber" required>
+					<p ng-show="(editInventoryForm.serialNumber.$error.pattern && submitted==true)"  class="help-block">Invalid unique serial number.</p>
+					<p ng-show="(editInventoryForm.serialNumber.$error.required && submitted==true)"  class="help-block">Unique serial number is required.</p>
+				</div>
+			</div>
+
+			<div class="row form-group">
+				<label class="col-xs-3">State*</label>
+				<div ng-init="getDeviceStates()" class="col-xs-9">
+					<div uib-dropdown uib-keyboard-nav is-open="status12.isopen">
+						<button id="records-button" type="button" 
+							class="form-control" uib-dropdown-toggle>
+							<span class="pull-left">{{currentDeviceState.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+						</button>
+						<ul uib-dropdown-menu role="menu" aria-labelledby="records-button" class="scrollable-menu">
+							<li ng-repeat="devicestate in deviceStates"><a href="" ng-click="changeDeviceState(devicestate)">{{devicestate.name}}</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class="row form-group">
+				<label class="col-xs-3">Location</label>
+				<div class="col-xs-9">
+					<div uib-dropdown uib-keyboard-nav is-open="status3.isopen">
+						<button id="records-button" type="button"
+							class="form-control" uib-dropdown-toggle
+							ng-disabled="disabled">
+							<span class="pull-left">{{selectedLocationType.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+						</button>
+						<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+							<li ng-repeat="locationType in locationTypes"><a href="" ng-click="selectLocationType(locationType)">{{locationType.name}}</a></li>
+						</ul>
+<!--
+							<p ng-if='selectedLocationType.id==1 && totalFranchises<=0'  class="help-block">No franchisees found</p>
+							<p ng-if='selectedLocationType.id==2 && totalSites<=0'  class="help-block">No sites found</p>
+-->
+					</div>
+				</div>
+			</div>
+
+			<div ng-init="getFranchisees()" ng-if='selectedLocationType.id==1' class="row form-group">
+				<label class="col-xs-3">Franchisees</label>
+				<div class="col-xs-9">
+					<div uib-dropdown uib-keyboard-nav is-open="status4.isopen">
+						<button id="records-button" type="button"
+							class="form-control" uib-dropdown-toggle
+							ng-disabled="totalFranchises <=0">
+							<span class="pull-left">{{selectedFranchise.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+						</button>
+						<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+							<li ng-repeat="franchise in franchises"><a href="" ng-click="selectFranchise(franchise)">{{franchise.name}}</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div ng-init="getSites()" ng-if='selectedLocationType.id==2' class="row form-group">
+				<label class="col-xs-3">Sites</label>
+				<div class="col-xs-9">
+					<div uib-dropdown uib-keyboard-nav is-open="status5.isopen">
+						<button id="records-button" type="button"
+							class="form-control" uib-dropdown-toggle
+							ng-disabled="totalSites <=0">
+							<span class="pull-left">{{selectedSite.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+						</button>
+						<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+							<li ng-repeat="site in sites"><a href="" ng-click="selectSite(site)">{{site.name}}</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="row form-group">
+				<label class="col-xs-3">Location Remarks*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : editInventoryForm.locationRemarks.$error.required && submitted==true }">
+					<input type="text" maxlength=100 name="locationRemarks" class="form-control" ng-model="locationRemarks" required>
+					<p ng-show="editInventoryForm.locationRemarks.$error.required && submitted==true"  class="help-block">Location is required.</p>
+				</div>
+			</div>
+
+			<div class="row form-group">
+				<div class="col-xs-3">
+					<label for="sitePoDate">Battery Date</label>
+				</div>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editInventoryForm.batteryDate.$invalid && submitted==true) }">
+				<p class="input-group">
+					<input type="text" class="form-control"
+							ng-disabled="billingFieldDisable" ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+								uib-datepicker-popup="{{format}}" ng-model="batteryDate"
+								is-open="isOpened1" close-text="Close"
+								show-button-bar="false" name="batteryDate"
+								 datepicker-options="{ showWeeks:false }" /> <span
+								class="input-group-btn">
+								<button type="button" class="btn btn-default"
+									ng-disabled="billingFieldDisable"
+									ng-click="isOpened1 = !isOpened1;format='dd/MM/yyyy'">
+									<i class="glyphicon glyphicon-calendar"></i>
+									</button>
+								</span>
+								</p>
+					<p
+												ng-show="(editInventoryForm.batteryDate.$invalid && submitted==true)"
+												class="help-block">Invalid battery date. </p>
+				</div>
+			</div>
+
+			<div class="row form-group">
+				<label class="col-xs-3">Brand</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : editInventoryForm.brand.$invalid && !editInventoryForm.brand.$pristine }">
+					<input type="text"  maxlength=100 name="brand" class="form-control" ng-model="brand">
+					<p ng-show="editInventoryForm.brand.$invalid && !editInventoryForm.brand.$pristine"  class="help-block">Invalid brand.</p>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button"  ng-click="ok('EDIT_INVENTORY')">Save</button>
+	</div>
+</script>
+<script type="text/ng-template" id="deleteInventory.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Delete Inventory - {{data.data.name}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+	</div>
+	<form name="deleteUser" ng-init="submitted=false;">
+	<div class="modal-body">
+		<label>Do you really want to Delete?</label>
+	</div>
+	<div class="modal-footer">
+		<button style="width:12%" class="btn btn-default" type="button" ng-click="cancel()">No</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('DELETE_INVENTORY')">Yes</button>
+	</div>
+	</form>
+</script>

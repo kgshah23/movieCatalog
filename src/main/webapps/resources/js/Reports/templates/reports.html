@@ -1,0 +1,143 @@
+
+	<div class="row remove_left_right_padding">
+		<div class="col-xs-6  title">Tickets
+			<a class="refresh margin_left_58perc" ng-click="openReportsFilter=!openReportsFilter"><i
+					ng-show="openReportsFilter" class="glyphicon glyphicon-minus"></i><i
+					class="glyphicon glyphicon-plus"
+					ng-show="!openReportsFilter"></i>FILTERS</a>
+    	</div>
+    	
+	</div>
+ 	
+
+	<div class="report_filter" uib-collapse="!openReportsFilter">
+		<form name="reportForm" novalidate ng-keypress="enterKeyEvent()">
+	   	<div class="row">
+		    <div class="col-xs-3 width_20perc" ng-show="showCustomer">
+		    	<label class="title_in_filter col-xs-12 remove_left_right_padding">Customers</label>
+		    	<div class="col-xs-12 remove_left_right_padding">
+			    	<div class="dropdown btn-group width_100perc" uib-dropdown uib-keyboard-nav is-open="status3.isopen">
+						<button type="button" class="btn btn-default form-control" uib-dropdown-toggle>
+							<span class="pull-left" ng-init="customerFilter = 'All Customers';">{{customerFilter}}</span>&nbsp;<span
+								class="pull-right caret dropdown_caret_in_filter"></span>
+						</button>
+						<ul uib-dropdown-menu role="menu" class="scrollable-menu"
+							aria-labelledby="dropdown_in_filter">
+							<li
+								ng-click="getReportlistByCustomer();"
+								role="menuitem"><a href="">All Customers</a></li>
+							<li ng-repeat = "customer in  customers"
+								ng-click="getReportlistByCustomer(customer);" style="overflow : hidden;text-overflow:ellipsis"><a href="">{{customer.name}} </a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		    <div class="col-xs-3 width_20perc">
+		    	<label class="title_in_filter col-xs-12 remove_left_right_padding">Sites</label>
+		    	<div class="col-xs-12 remove_left_right_padding">
+			    	<div class="dropdown btn-group width_100perc" uib-dropdown uib-keyboard-nav is-open="status5.isopen">
+						<button type="button" class="btn btn-default form-control" uib-dropdown-toggle >
+							<span class="pull-left" ng-init="siteFilter = 'All Sites';">{{siteFilter}}</span>&nbsp;<span
+								class="pull-right caret dropdown_caret_in_filter"></span>
+						</button>
+						<ul uib-dropdown-menu role="menu" class="scrollable-menu"
+							aria-labelledby="dropdown_in_filter">
+							<li
+								ng-click="selectedSite = 'All Sites'; getReportlistBySite();"
+								role="menuitem"><a href="">All Sites</a></li>
+							<li ng-repeat = "site in  sites"
+								ng-click="getReportlistBySite(site);" style="overflow : hidden;text-overflow:ellipsis"><a href="">{{site.name}} </a></li>
+						</ul>
+					</div>
+				</div>
+		    </div>
+		    <div class="col-xs-3">
+		    	<label class="title_in_filter col-xs-12 remove_left_right_padding">Aging (In Days)</label>
+		    	<div class="col-xs-12 remove_left_right_padding" ng-class="{ 'has-error' : (reportForm.aging.$error.required  && submitted==true) }">
+			    	<input class="width_70perc form-control" type="number" name="aging" ng-model="aging"  min="0" required>
+			    	<p ng-show="(reportForm.aging.$error.required  && submitted==true)"  class="help-block">Aging is required.</p>
+				</div>
+				
+		    </div>
+		    
+		
+		<div class="col-xs-3">
+			<button class="btn btn-primary width_40perc margin_top_9perc" ng-click="submitted = true;getReport()">Apply</button>
+		</div>
+		</div>
+		</form>
+	</div>
+	
+	<br><br>
+	<div class="row">
+		<div class="col-xs-8 title remove_left_right_padding">Number of Tickets: {{total}}</div>
+		<div class="pull-right col-xs-4">
+			<div class="col-xs-8 remove_right_padding ">
+				<div class="input-group  width_100perc">
+					<input type="text" class="form-control" ng-model="keyword" name="search"  ng-change="enterKeyEvent()"
+						placeholder="Search"  required autofocus>
+				</div>
+			</div>
+			
+			<div class="col-xs-3 remove_right_padding"  ng-init="countPerPage=10">
+				<div class="btn-group width_100perc" uib-dropdown uib-keyboard-nav is-open="status1.isopen">
+					<button id="records-button" type="button"
+						class="btn btn-default form-control" uib-dropdown-toggle
+						ng-disabled="disabled">
+						<span>{{countPerPage}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span
+							class="caret"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu" class="scrollable-menu min_width_60perc" aria-labelledby="records-button">
+						<li ng-click="countPerPage=10; getUsersByFilter(10);" role="menuitem"><a href="">10</a></li>
+						<li ng-click="countPerPage=20; getUsersByFilter(20);" role="menuitem"><a href="">20</a></li>
+						<li ng-click="countPerPage=50; getUsersByFilter(50);" role="menuitem"><a href="">50</a></li>
+						<li ng-click="countPerPage=100; getUsersByFilter(100);" role="menuitem"><a href="">100</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="row remove_left_right_padding">
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<th>Ticket ID</th>
+				<th>Timestamp</th>
+				<th>Ticket Type</th>
+				<th>Device Type</th>
+				<th>Ticket State</th>
+				<th>Description</th>
+				<th>Customer</th>
+				<th>Site</th>
+				<th>Assigned To</th>
+			</thead>
+			<tbody>
+				<tr dir-paginate="report in reports | itemsPerPage: countPerPage"
+					total-items="total" current-page="pagination.current">
+				<td>T{{ report.id }}</td>
+				<td>{{ report.createdDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+				<td>{{ (report.ticketType != undefined )? getTicketType(report.ticketType): '-' }}</td>
+				<td>{{ report.deviceName }}</td>
+				<td>{{ (report.state != undefined)? getTicketState(report.state) :'-' }}</td>
+				<td>{{ report.description }}</td>
+				<td>{{ report.customerName }}</td>
+				<td>{{ report.siteName }}</td>
+				<td>{{ report.assignee }}</td>
+				</tr>
+				<tr ng-show="!reports.length"><td colspan="9" class="text-center">No Records Found</td></tr>
+			</tbody>
+		</table>
+	</div>
+	</div>
+	<div class="row remove_left_right_padding">
+	<button type="button" class="btn btn-default" csv-header="csvHeaders" ng-csv="csvReport" filename="TicketReport.csv" >
+		Download CSV File
+	</button>
+	<button type="button" class="btn btn-default" ng-click="getReportPDF()" ng-hide="!reports.length">
+		Download PDF File
+	</button>
+	<dir-pagination-controls
+		on-page-change="getReportOnPage();"
+		template-url="/core/resources/js/Common/templates/dirPagination.html"></dir-pagination-controls>
+	</div>

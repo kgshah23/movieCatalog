@@ -1,0 +1,873 @@
+
+<div>
+	<h3 ng-bind='name' class="title"></h3>
+
+
+
+
+	<div class="CollapseDiv ">
+		<form name="CustomersInfo" ng-init="submitted=false;" novalidate>
+			<div class="CollapseDiv ">
+				<div class="subheaderDiv">
+					<h5 class="subheaderCustomer">
+					<a class="linkCursor" ng-click="collapsedInfo()"><i id="up"
+					ng-show="iscollapsedInfo" class="glyphicon glyphicon-chevron-up"></i><i
+					class="glyphicon glyphicon-chevron-down" id="down"
+					ng-show="!iscollapsedInfo"></i>Info</a>
+					</h5>
+
+
+					<div class="details">
+						<div collapse="!iscollapsedInfo">
+
+							<div class="row">
+
+								<div class="col-xs-6">
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Name*</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (CustomersInfo.name.$error.pattern && submitted==true) || nameError || (CustomersInfo.name.$error.required && submitted==true)}">
+											<input ng-change='changeNameError()' name="name"
+												ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/" maxlength=100
+												ng-model='customer.name' class="form-control" type="text"
+												ng-disabled="fieldDisabled" value="XYZ" disabled="disabled"
+												id="name" required>
+											<p
+												ng-show="(CustomersInfo.name.$error.pattern && submitted==true)"
+												class="help-block">Invalid name.</p>
+
+											<p
+												ng-show="(CustomersInfo.name.$error.required && submitted==true)"
+												class="help-block">Name is required.</p>
+											<p ng-if="nameError" class="help-block">{{nameErrorMessage}}</p>
+										</div>
+									</div>
+
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="cityState">City*</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' :  (CustomersInfo.city.$error.pattern && submitted==true) || (CustomersInfo.city.$error.required && submitted==true)}">
+											<input type="text" class="form-control" name="city" ng-pattern="/^[a-zA-Z\s]*$/"
+												ng-disabled="fieldDisabled" ng-model="customer.city"  maxlength=32 required>
+											<p
+												ng-show="(CustomersInfo.city.$error.pattern && submitted==true)"
+												class="help-block">Invalid city.</p>
+												<p ng-show="(CustomersInfo.city.$error.required && submitted==true)"
+												class="help-block">City is required.</p>
+										</div>
+									</div>
+									
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Customer Status</label>
+										</div>
+										<div class="col-xs-7">
+											<div class="btn-group" uib-dropdown uib-keyboard-nav is-open="status2.isopen"
+												style="width: 100%">
+												<button id="records-button" type="button"
+													class="btn btn-default form-control" uib-dropdown-toggle
+													ng-disabled="fieldDisabled || !isFTAdmin">
+													<span class="pull-left">{{currentStatus.name}}</span>&nbsp;<span
+														class="pull-right caret dropdown_caret"></span>
+												</button>
+												<ul uib-dropdown-menu role="menu"
+													aria-labelledby="records-button">
+													<li ng-click="currentStatus = {id : 1,name : 'ACTIVE'}"><a href="">ACTIVE</a></li>
+													<li ng-click="currentStatus = {id : 2,name : 'INACTIVE'}"><a href="">INACTIVE</a></li>
+													<!-- <li ng-click="currentStatus = {id : 3,name : 'DELETE'}"><a href="">DELETE</a></li> -->
+												</ul>
+											</div>
+										</div>
+									</div>
+									
+									<!-- <div class="row form-group">
+										<div class="col-xs-4">
+											<label for="contractStart">Contract Start Date</label>
+										</div>
+										<div class="col-xs-7" ng-class="{ 'has-error' : (CustomersInfo.contractStart.$invalid && submitted == true) || (creationcomperror == true)}">
+										<p class="input-group">
+											<input type="text" ng-disabled="fieldDisabled" name="contractStart"  ng-change="compareCreationandContractDate();"
+												class="form-control" uib-datepicker-popup="{{format}}" ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+												ng-model="contractStart" is-open="isOpened" datepicker-options="{ showWeeks:false }" show-button-bar="false"
+												close-text="Close" /> <span class="input-group-btn">
+												<button type="button" ng-disabled="fieldDisabled"
+													class="btn btn-default"
+													ng-click="isOpened = !isOpened;format='dd/MM/yyyy'">
+													<i class="glyphicon glyphicon-calendar"></i>
+												</button>
+											</span>
+										</p>
+										<p
+												ng-show="(CustomersInfo.contractStart.$invalid && submitted == true)"
+												class="help-block">Invalid contract start date. </p>
+												<p ng-if="creationcomperror == true" class="error">Contract Start Date should not be earlier than Customer Creation Date.</p>
+									</div>
+									</div> -->
+									
+									<!-- <div class="row form-group">
+
+										<div class="col-xs-4">
+											<label for="detectionFile">B-Certificate for fire
+												detection number</label>
+										</div>
+
+										<div ng-if="customer.firedetectionFile == null || uploadDetection" class="col-xs-7"
+											ng-class="{ 'col-xs-6' : isFireDetectingUploading,'has-error' : isFireDetectingFailed , 'has-success':detectionFileUploaded}">
+	
+											<div  ng-class="{ 'input-group' :  !detectionFileUploaded && customer.firedetectionFile != null}">
+											     <input id ='detectionFile' name="detectionFile" class="form-control" nv-file-select
+												uploader="firedetectionUploader" type="file"
+												ng-disabled="fieldDisabled"
+												value="1st floor" filters="fileuploadfilter">
+											   <span ng-if="!detectionFileUploaded && customer.firedetectionFile != null" ng-click="detectionUpload(false)" style="font-size: 14px" class="input-group-addon search_btn cancel_fileupload  glyphicon glyphicon-remove position_static"></span>
+											</div>
+											
+											
+
+											<p ng-if="isFireDetectingFailed" class="help-block">Upload failed! Please upload an image or PDF file with size less than 5MB.</p>
+											<p ng-if="!isFireDetectingFailed && !detectionFileUploaded" class="help-block">Please upload an image or PDF file with size less than 5MB.</p>
+											<p ng-if="detectionFileUploaded" class="help-block">Fire detection file uploaded.</p>
+
+										</div>
+										<div ng-if="isFireDetectingUploading && (customer.firedetectionFile == null || uploadDetection)"
+											class="col-xs-1 spinr-container">
+											<div class="spinr"></div>
+										</div>
+										<div ng-if="customer.firedetectionFile != null && !uploadDetection" class="col-xs-7">
+											<div ng-class="{ 'col-xs-12' :  fieldDisabled}" class="input-group">
+										      <input ng-disabled="fieldDisabled" type="text" ng-model="firedetectionFile" class="form-control" id="inputGroupSuccess3" readonly="readonly" aria-describedby="inputGroupSuccess3Status">
+										    
+										      <span ng-if="!fieldDisabled" ng-click="detectionUpload(true)" class="input-group-addon search_btn glyphicon glyphicon-pencil position_static" title="Edit Choosen File"></span>
+										    </div>
+										</div>
+										
+										
+										
+									</div>-->
+
+									<div  class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Firetweet User (CR)</label>
+										</div>
+										<div class="col-xs-7">
+											<!-- <ui-select multiple="true"
+												ng-model="multipleList.selectedFTCRUsers"
+												ng-disabled="fieldDisabled" name="crusers" theme="select2"
+												ng-disabled="disableCRUsers" style="width:100%;">
+											<ui-select-match placeholder="Select FT CR users">{{$item.firstName}}
+											&nbsp; {{$item.lastName}}</ui-select-match> <ui-select-choices
+												repeat="cruser in (FTCRUsers | propsFilter: {firstName: $select.search,lastName: $select.search}) track by $index">
+											<div
+												ng-bind-html="cruser.firstName +' '+ cruser.lastName | highlight: $select.search"></div>
+											<small>  name: {{user.firstName}}
+										</small> </ui-select-choices> </ui-select> -->
+										<div class="btn-group dropdown width_100perc" uib-dropdown uib-keyboard-nav is-open="status5.isopen">
+											<button id="records-button" type="button"
+												class="btn btn-default form-control" uib-dropdown-toggle
+												ng-disabled="fieldDisabledFTCR || NoFTCRUsersFound">
+												<span class="pull-left">{{ftcrFilter}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span
+													class="pull-right caret dropdown_caret"></span>
+											</button>
+											<ul class="pull-left scrollable-menu" uib-dropdown-menu  role="menu" 
+												aria-labelledby="records-button">
+												<!-- <li ng-click="updateCR()"><a href="">Select FT CR user</a></li> -->
+												<li ng-repeat="ftcr in  FTCRUsers"
+													ng-click="updateCR(ftcr)"><a href="">{{ftcr.firstName
+														+ " "+ ftcr.lastName }} </a></li>
+											</ul>
+										</div>
+										</div>
+									</div> 
+
+								</div>
+
+								<div class="col-xs-6">
+									
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="address">Address*</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (CustomersInfo.address.$error.pattern && submitted==true) || (CustomersInfo.address.$error.required && submitted==true) }">
+											<input name='address' ng-model='customer.address1' maxlength=256
+												class="form-control" type="text" ng-disabled="fieldDisabled"
+												disabled="disabled" required autofocus>
+												<p ng-show="(CustomersInfo.address.$error.pattern && submitted==true)"
+												class="help-block">Invalid address.</p>
+
+											<p ng-show="(CustomersInfo.address.$error.required && submitted==true)"
+												class="help-block">Address is required.</p>
+										</div>
+									</div>
+									
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="cityState">State*</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' :  (CustomersInfo.State.$error.pattern && submitted==true) || (CustomersInfo.State.$error.required && submitted==true)}">
+											<input type="text" class="form-control" name="State" ng-pattern="/^[a-zA-Z\s]*$/"
+												ng-disabled="fieldDisabled" ng-model="customer.state"  maxlength=32 required>
+											<p
+												ng-show="(CustomersInfo.State.$error.pattern && submitted==true)"
+												class="help-block">Invalid state.</p>
+												<p ng-show="(CustomersInfo.State.$error.required && submitted==true)"
+												class="help-block">State is required.</p>
+										</div>
+									</div>
+									
+									<div class="row form-group">
+
+										<div class="col-xs-4">
+											<label for="createdDate">Customer Creation Date</label>
+										</div>
+										<div class="col-xs-7">
+											<input type="text" class="form-control"
+												uib-datepicker-popup="dd/MM/yyyy"
+												ng-model="customer.createdDate" name="createdDate"
+												ng-disabled="true">
+										</div>
+									</div>
+									<!-- <div class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Contract End Date</label>
+										</div>
+										<div class="col-xs-7" ng-class="{ 'has-error' : (CustomersInfo.contractEnd.$invalid && submitted == true) || (haserror == true) }">
+										<p class="input-group">
+											<input type="text" ng-disabled="fieldDisabled" name="contractEnd" ng-change="compareContractDate()"
+												class="form-control" uib-datepicker-popup="{{format}}" ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+												ng-model="contractEnd" is-open="isOpened1" datepicker-options="{ showWeeks:false }" show-button-bar="false"
+												close-text="Close" /> <span class="input-group-btn">
+												<button type="button" ng-disabled="fieldDisabled"
+													class="btn btn-default"
+													ng-click="isOpened1 = !isOpened1;format='dd/MM/yyyy'">
+													<i class="glyphicon glyphicon-calendar"></i>
+												</button>
+											</span>
+										</p>
+										<p
+												ng-show="(CustomersInfo.contractEnd.$invalid && submitted == true)"
+												class="help-block">Invalid contract end date. </p>
+										<p ng-if="haserror == true" class="error">Contract End Date should not be earlier than contract start Date.</p>
+									</div>
+									</div> -->
+									<!-- <div class="row form-group">
+
+										<div class="col-xs-4">
+											<label for="fightingFile">B-Certificate for
+												firefighting number</label>
+										</div>
+										<div  ng-if="customer.firefightingFile == null || uploadFighting" class="col-xs-7"
+											ng-class="{ 'col-xs-6' : isFireFightingUploading,'has-error' : isFireFightingFailed, 'has-success':fightingFileUploaded}">
+											
+											<div  ng-class="{ 'input-group' :  (!fightingFileUploaded && customer.firefightingFile != null)}">
+											    <input id ='fightingFile' name="fightingFile" nv-file-select
+												uploader="firefightingUploader"
+												ng-model='customer.firefightingFile' class="form-control"
+												type="file" ng-disabled="fieldDisabled" disabled="disabled"
+												value="1st floor">
+											   <span ng-if="!fightingFileUploaded && customer.firefightingFile != null" ng-click="fightingUpload(false)" style="font-size: 14px" class="input-group-addon search_btn cancel_fileupload  glyphicon glyphicon-remove position_static"></span>
+											</div>
+											
+
+											<p ng-if="isFireFightingFailed" class="help-block">Upload failed! Please upload an image or PDF file with size less than 5MB.</p>
+											<p ng-if="!isFireFightingFailed && !fightingFileUploaded" class="help-block">Please upload an image or PDF file with size less than 5MB.</p>
+											<p ng-if="fightingFileUploaded" class="help-block">Fire fighting file uploaded.</p>
+										</div>
+										<div ng-if="isFireFightingUploading  && (customer.firefightingFile == null || uploadFighting)"
+											class="col-xs-1 spinr-container">
+											<div class="spinr"></div>
+										</div>
+										<div ng-if="customer.firefightingFile != null && !uploadFighting" class="col-xs-7">
+											<div ng-class="{ 'col-xs-12' :  fieldDisabled}" class="input-group">
+										      <input ng-disabled="fieldDisabled" type="text" ng-model="firefightingFile" class="form-control" id="inputGroupSuccess3" aria-describedby="inputGroupSuccess3Status" readonly="readonly">
+										    
+										      <span ng-if="!fieldDisabled" ng-click="fightingUpload(true)" class="input-group-addon search_btn glyphicon glyphicon-pencil position_static" title="Edit Choosen File"></span>
+										    </div>
+										</div>
+
+
+									</div>-->
+
+									
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<div collapse="!iscollapsedInfo">
+					<button class="btn btn-default editBtn"
+						ng-click="enableFormfilelds()" ng-show="showEditInfoBtn">Edit</button>
+					<button class="btn btn-default editBtn"
+						ng-click="saveInfo($event)" ng-show="showSaveInfoBtn">Save
+					</button>
+					<button class="btn btn-default editBtn margin_left_1perc"
+						ng-click="cancelInfo()" ng-show="showCancelInfoBtn">Cancel
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+
+
+
+
+
+
+	<div class="CollapseDiv">
+		<div class="subheaderDiv">
+			<h5 class="subheaderCustomer">
+				<a class="linkCursor" ng-click="collapsedContacts()"><i id="up"
+					ng-show="iscollapsedContacts" class="glyphicon glyphicon-chevron-up"></i><i
+					class="glyphicon glyphicon-chevron-down" id="down"
+					ng-show="!iscollapsedContacts"></i>Contacts</a>
+			</h5>
+
+			<div class="details">
+				<div collapse="!iscollapsedContacts" ng-init="submitcontact=false">
+
+						
+						<div class="row">
+
+							<div class="col-xs-6">
+								<form name="primaryForm">
+									<div class="row col-xs-12">
+										<p class="contact">Primary Contact</p>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Name</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (primaryForm.name.$error.pattern && primaryContact.modified == true && submitcontact==true) || (primaryForm.name.$error.required && primaryContact.modified == true && submitcontact==true) }">
+											<input ng-keyup='setModified(1)' name="name" id="primarycontact" maxlength=100
+												ng-pattern="/^[a-zA-Z\.\s]*$/" ng-model='primaryContact.name'
+												class="form-control elipsis" type="text" ng-required="primaryContact.infoExist || primaryContact.email || primaryContact.cellPhone"
+												ng-disabled="fieldDisabledContact">
+											<p
+												ng-show="(primaryForm.name.$error.pattern && primaryContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid name.</p>
+											<p
+												ng-show="(primaryForm.name.$error.required && primaryContact.modified == true && submitcontact==true)"
+												class="help-block">Name is required.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="email">Email</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' :(primaryForm.email.$error.pattern && primaryContact.modified == true && submitcontact==true) }">
+											<input ng-keyup='setModified(1)' name="email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+												ng-model='primaryContact.email' class="form-control elipsis" maxlength=100
+												type="text" ng-disabled="fieldDisabledContact">
+											<p
+												ng-show="(primaryForm.email.$error.pattern && primaryContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid email.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="phone">Phone</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (primaryForm.phone.$error.pattern && primaryContact.modified == true && submitcontact==true) || (primaryForm.phone.$error.minlength && primaryContact.modified == true && submitcontact==true && !primaryForm.phone.$error.pattern) }">
+											<input ng-keyup='setModified(1)' name="phone" 
+												ng-pattern="/^[0-9]*$/" ng-model='primaryContact.cellPhone'
+												class="form-control elipsis" type="text"
+												ng-disabled="fieldDisabledContact" value="XYZ"
+												minlength=10 maxlength=16>
+											<p
+												ng-show="(primaryForm.phone.$error.pattern && primaryContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid phone.</p>
+											<p
+												ng-show="(primaryForm.phone.$error.minlength && primaryContact.modified == true && submitcontact==true && !primaryForm.phone.$error.pattern)"
+												class="help-block">Phone number must have at least 10 digits.</p>
+										</div>
+									</div>
+								</form>
+							</div>
+
+							<div class="col-xs-6">
+								<form name="purchaseForm">
+									<div class="row col-xs-12">
+										<p class="contact">Purchase Dept. Contact</p>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Name</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (purchaseForm.name.$error.pattern && purchaseContact.modified == true && submitcontact==true) || (purchaseForm.name.$error.required && purchaseContact.modified == true && submitcontact==true)}">
+											<input ng-keyup='setModified(2)' name="name" maxlength=100
+												ng-pattern="/^[a-zA-Z\.\s]*$/" ng-model='purchaseContact.name'
+												class="form-control elipsis" type="text" ng-required="purchaseContact.infoExist || purchaseContact.email || purchaseContact.cellPhone"
+												ng-disabled="fieldDisabledContact" value="XYZ">
+											<p
+												ng-show="(purchaseForm.name.$error.pattern && purchaseContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid name.</p>
+											<p
+												ng-show="(purchaseForm.name.$error.required && purchaseContact.modified == true && submitcontact==true)"
+												class="help-block">Name is required.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="email">Email</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' :(purchaseForm.email.$error.pattern && purchaseContact.modified == true && submitcontact==true) }">
+											<input ng-keyup='setModified(2)' name="email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+												ng-model='purchaseContact.email' class="form-control elipsis" maxlength=100
+												type="text" ng-disabled="fieldDisabledContact" value="XYZ"
+												disabled="disabled">
+											<p
+												ng-show="(purchaseForm.email.$error.pattern && purchaseContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid email.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="phone">Phone</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (purchaseForm.phone.$error.pattern && purchaseContact.modified == true && submitcontact==true) || (purchaseForm.phone.$error.minlength && purchaseContact.modified == true && submitcontact==true && !purchaseForm.phone.$error.pattern) }">
+											<input ng-keyup='setModified(2)' name="phone"
+												ng-pattern="/^[0-9]*$/" ng-model='purchaseContact.cellPhone'
+												class="form-control elipsis" type="text"
+												ng-disabled="fieldDisabledContact" value="XYZ"
+												disabled="disabled" minlength=10 maxlength=16>
+											<p
+												ng-show="(purchaseForm.phone.$error.pattern && purchaseContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid phone.</p>
+											<p
+												ng-show="(purchaseForm.phone.$error.minlength && purchaseContact.modified == true && submitcontact==true && !purchaseForm.phone.$error.pattern)"
+												class="help-block">Phone number must have at least 10 digits.</p>
+										</div>
+									</div>
+								</form>
+							</div>
+							</div>
+						<div class="row">
+
+							<div class="col-xs-6">
+								<form name="billingForm">
+									<div class="row col-xs-12">
+										<p class="contact">Billing Contact</p>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Name</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (billingForm.name.$error.pattern && billingContact.modified == true && submitcontact==true) || (billingForm.name.$error.required && billingContact.modified == true && submitcontact==true)}">
+											<input ng-keyup='setModified(3)' name="name" maxlength=100
+												ng-pattern="/^[a-zA-Z\.\s]*$/" ng-model='billingContact.name'
+												class="form-control elipsis" type="text" ng-required="billingContact.infoExist || billingContact.email || billingContact.cellPhone"
+												ng-disabled="fieldDisabledContact" value="XYZ"
+												disabled="disabled">
+											<p
+												ng-show="(billingForm.name.$error.pattern && billingContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid name.</p>
+											<p
+												ng-show="(billingForm.name.$error.required && billingContact.modified == true && submitcontact==true)"
+												class="help-block">Name is required.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="email">Email</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' :(billingForm.email.$error.pattern && billingContact.modified == true && submitcontact==true) }">
+											<input ng-keyup='setModified(3)' name="email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+												ng-model='billingContact.email' class="form-control elipsis" maxlength=100
+												type="text" ng-disabled="fieldDisabledContact" value="XYZ"
+												disabled="disabled">
+											<p
+												ng-show="(billingForm.email.$error.pattern && billingContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid email.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="phone">Phone</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (billingForm.phone.$error.pattern &&  billingContact.modified == true && submitcontact==true)  || (billingForm.phone.$error.minlength &&  billingContact.modified == true && submitcontact==true && !billingForm.phone.$error.pattern)}">
+											<input ng-keyup='setModified(3)' name="phone"
+												ng-pattern="/^[0-9]*$/" ng-model='billingContact.cellPhone'
+												class="form-control elipsis" type="text"
+												ng-disabled="fieldDisabledContact" value="XYZ"
+												disabled="disabled" minlength=10 maxlength=16>
+											<p
+												ng-show="(billingForm.phone.$error.pattern &&  billingContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid phone.</p>
+											<p
+												ng-show="(billingForm.phone.$error.minlength &&  billingContact.modified == true && submitcontact==true && !billingForm.phone.$error.pattern)"
+												class="help-block">Phone number must have at least 10 digits.</p>
+										</div>
+									</div>
+								</form>
+							</div>
+
+							<div class="col-xs-6">
+								<form name="financeForm">
+									<div class="row col-xs-12">
+										<p class="contact">Finance Dept. Contact</p>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Name</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (financeForm.name.$error.pattern && financeContact.modified == true && submitcontact==true) || (financeForm.name.$error.required && financeContact.modified == true && submitcontact==true)}">
+											<input ng-keyup='setModified(4)' name="name" maxlength=100
+												ng-pattern="/^[a-zA-Z\.\s]*$/" ng-model='financeContact.name'
+												class="form-control elipsis" type="text" ng-required="financeContact.infoExist || financeContact.email || financeContact.cellPhone"
+												ng-disabled="fieldDisabledContact" value="XYZ"
+												disabled="disabled">
+											<p
+												ng-show="(financeForm.name.$error.pattern && financeContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid name.</p>
+											<p
+												ng-show="(financeForm.name.$error.required && financeContact.modified == true && submitcontact==true)"
+												class="help-block">Name is required.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="email">Email</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' :(financeForm.email.$error.pattern && financeContact.modified == true && submitcontact==true)}">
+											<input ng-keyup='setModified(4)' name="email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+												ng-model='financeContact.email' class="form-control elipsis" maxlength=100
+												type="text" ng-disabled="fieldDisabledContact" value="XYZ"
+												disabled="disabled">
+											<p
+												ng-show="(financeForm.email.$error.pattern && financeContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid email.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="phone">Phone</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (financeForm.phone.$error.pattern && financeContact.modified == true && submitcontact==true) || (financeForm.phone.$error.minlength && financeContact.modified == true && submitcontact==true && !financeForm.phone.$error.pattern)}">
+											<input ng-keyup='setModified(4)' name="phone"
+												ng-pattern="/^[0-9]*$/" ng-model='financeContact.cellPhone'
+												class="form-control elipsis" type="text"
+												ng-disabled="fieldDisabledContact" value="XYZ"
+												disabled="disabled" minlength=10 maxlength=16>
+											<p
+												ng-show="(financeForm.phone.$error.pattern && financeContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid phone.</p>
+											<p
+												ng-show="(financeForm.phone.$error.minlength && financeContact.modified == true && submitcontact==true && !financeForm.phone.$error.pattern)"
+												class="help-block">Phone number must have at least 10 digits.</p>
+										</div>
+									</div>
+								</form>
+							</div>
+
+						</div>
+				
+				</div>
+			</div>
+		</div>
+
+		<div collapse="!iscollapsedContacts">
+			<button type="button" class="customerBtn btn btn-default"
+				ng-click="enableFormfileldsContacts()"
+				ng-hide="editDisabledContacts">Edit</button>
+			<button class="btn btn-default editBtn"
+				ng-hide="fieldDisabledContact" ng-click="saveContacts($event)">Save</button>
+			<button class="btn btn-default editBtn margin_left_1perc"
+				ng-click="cancelContactsInfo()" ng-hide="fieldDisabledContact">Cancel
+			</button>
+		</div>
+	</div> 
+	</div>
+	<div class="CollapseDiv">
+
+		<div class="siteTableContainer">
+			<h5 class="subheaderCustomer ">
+				<a class="linkCursor" ng-click="collapsedSites()"><i id="up"
+					ng-show="iscollapsedSites" class="glyphicon glyphicon-chevron-up"></i><i
+					class="glyphicon glyphicon-chevron-down" id="down"
+					ng-show="!iscollapsedSites"></i>Sites</a> 
+			</h5>
+
+		</div>
+		<div ng-if="iscollapsedSites == true">
+			<div
+				ng-include="'/core/resources/js/Common/templates/siteTable.html'"></div>
+		</div>
+	</div>
+	
+<!-- **************************************************Contract - Author - Pragati -->
+
+	<div ng-show="contractShow" class="CollapseDiv ">
+
+		<form name="contract">
+			<div class="CollapseDiv">
+				<div class="subheaderDiv">
+							<div class="row padding-right-5-3-perc">
+								<div class="col-xs-5">
+								<h5 class="subheaderCustomer margin-top-5-perc">
+								<a class="linkCursor" ng-click="collapsedContract()"><i
+									id="up" ng-show="iscollapsedContract" 
+									class="glyphicon glyphicon-chevron-up"></i><i
+									class="glyphicon glyphicon-chevron-down" id="down"
+									ng-show="!iscollapsedContract"></i>Contract Info</a>
+								</h5>
+								
+								</div>
+								
+						<div ng-show="iscollapsedContract">
+							<div class="col-xs-1 remove_right_padding pull-right margin-top-1-5-perc">
+								<div class="btn-group width_100perc" uib-dropdown uib-keyboard-nav
+									is-open="status3.isopen">
+									<button id="records-button" type="button"
+										class="btn btn-default form-control" uib-dropdown-toggle
+										ng-disabled="disabled">
+										<div class="row">
+											<div class="col-xs-6"><span>{{pageCount}}</span></div>
+											<div class="col-xs-1"><span
+											class="caret"></span></div>
+										</div>
+										 &nbsp;&nbsp;&nbsp;&nbsp;
+									</button>
+									<ul uib-dropdown-menu role="menu" class="min_width_60perc"
+										aria-labelledby="records-button">
+										<li ng-click="pageCount=10;" role="menuitem"><a href="">10</a></li>
+										<li ng-click="pageCount=20;" role="menuitem"><a href="">20</a></li>
+										<li ng-click="pageCount=50;" role="menuitem"><a href="">50</a></li>
+										<li ng-click="pageCount=100;" role="menuitem"><a href="">100</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="col-xs-2 pull-right remove_right_padding margin-top-1-5-perc">
+								    	<div class="col-xs-12 remove_left_right_padding">
+									    	<div class="dropdown btn-group width_100perc" uib-dropdown uib-keyboard-nav is-open="status15.isopen">
+												<button type="button" class="btn btn-default form-control" uib-dropdown-toggle>
+													<span class="pull-left">{{selectedSite.name}}</span>&nbsp;<span
+														class="pull-right caret dropdown_caret_in_filter"></span>
+												</button>
+												<ul uib-dropdown-menu role="menu" class="scrollable-menu"
+													aria-labelledby="dropdown_in_filter">
+													<li
+														ng-click="setSiteName({ id:0,name: 'All Sites' }); "
+														role="menuitem"><a href="">All Sites</a></li>
+													<li ng-repeat = "site in  sites"
+														ng-click="setSiteName(site)" style="overflow : hidden;text-overflow:ellipsis"><a href="">{{site.name}} </a></li>
+												</ul>
+											</div>
+										</div>
+							</div>
+						</div>
+															
+							</div>
+					<div class="details">
+						<div collapse="!iscollapsedContract">
+							<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<th>Issue Date</th>
+									<th>Reference No.</th>
+									<th>Site </th>
+									<th>Start Date</th>
+									<th>Expiry Date</th>
+								<!-- 	<th>Notes</th>
+									<th>Is Active</th> -->
+									<th class="actions_column">Actions</th>
+								</thead>
+								<tbody>
+									<tr
+										dir-paginate="contract in contracts | itemsPerPage: pageCount" 
+										total-items="totalContracts" current-page="pagination1.current" pagination-id="contract">
+										<td>{{ contract.issueDate | date:'dd/MM/yyyy' }}</td>
+										<td>{{ contract.referenceNo }}</td>
+										<td>{{ contract.sitename }} </td> 
+										<td>{{ contract.startDate | date:'dd/MM/yyyy' }}</td>
+										<td>{{ contract.endDate | date:'dd/MM/yyyy' }}</td>
+									<!-- 	<td>{{ contract.note }}</td>
+										<td>{{ contract.isActive }}</td> -->
+										<td>
+												<button ng-click="downloadContractFile(contract,$event)" ng-disabled="contract.attachment==null" ng-attr-title="{{ (contract.attachment==null)? 'File not uploaded.' : ''}}" class="btn btn-default open_btn">
+													 <span class="glyphicon glyphicon-new-window"></span>
+													 Open
+												</button>
+												<button ng-show="updateContract" ng-click="open('md','deleteContract.html',contract,refreshContractTable,$event);"
+												class="btn btn-default margin_left_2perc"><span class="glyphicon glyphicon-trash"></span>Delete</button></td>
+
+									</tr>
+									<tr ng-show="!contracts.length">
+										<td colspan="8" class="text-center">No Records Found</td>
+									</tr>
+								</tbody>
+							</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div collapse="!iscollapsedContract">
+				<button class="btn btn-default" ng-show="updateContract" ng-click="open('md','addNewContract.html',selectedSite,refreshContractTable,$event);">Add New Contract</button>
+				<dir-pagination-controls on-page-change="getcontracts();" pagination-id="contract"
+						template-url="/core/resources/js/Common/templates/dirPagination.html">
+				</dir-pagination-controls>
+			</div>
+			</form>
+	</div>
+	
+<!--  ADD NEW CONTRACT POPUP -->
+<script type="text/ng-template" id="addNewContract.html">
+	<div class="modal-header">
+		<span class="modal-title"><span class="col-xs-9 elipsis remove_left_right_padding "> Add New Contract - {{ name }} </span> <span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form  name="addNewContract" ng-keypress="enterKeyEvent($event,'addNewContract')">
+		<div class="row form-group">
+			<label class="col-xs-3 lblSite">Site*</label>
+		<div class="col-xs-9">
+		<div class="dropdown btn-group width_100perc" uib-dropdown uib-keyboard-nav is-open="status5.isopen">
+			<button type="button" class="btn btn-default form-control" ng-disabled="selectedSite.id==undefined" uib-dropdown-toggle>
+			<span class="pull-left">{{selectedSite.name}}</span>&nbsp;<span
+			class="pull-right caret dropdown_caret_on_newServiceTicket"></span>
+			</button>
+			<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="dropdown_in_filter">
+					<li ng-repeat = "site in  sites"
+						ng-click="setSiteName(site)" style="overflow : hidden;text-overflow:ellipsis"><a href="">{{site.name}} </a></li>
+			</ul>
+		</div>
+		</div>
+		</div>
+		<div class="row form-group">
+			<label class="col-xs-3 lblSite">Ref No.*</label>
+			<div class="col-xs-9"  ng-class="{ 'has-error' : (addNewContract.refNo.$error.pattern && submitted == true) || (addNewContract.refNo.$error.required && submitted == true) }">
+				<input type="text" ng-pattern="/^[0-9]*$/" name="refNo" class="form-control" ng-model="refNo" required>
+				<p ng-show="(addNewContract.refNo.$error.pattern && submitted == true)" class="help-block">Invalid ref No.</p>
+				<p ng-show="(addNewContract.refNo.$error.required && submitted == true) "  class="help-block">Ref No. is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			
+			<label class="col-xs-3 lblSite">Issue Date*</label>
+			
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewContract.issuedate.$invalid && submitted==true && !addNewContract.issuedate.$error.required) || (addNewContract.issuedate.$error.required && submitted==true)}">
+				<p class="input-group">
+					<input id="issuedate" type="text" name="issuedate" class="form-control"
+					 uib-datepicker-popup="{{format}}" is-open="isOpened" ng-model="issuedate"
+			   		 ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+			   		 close-text="Close" datepicker-options="{ showWeeks:false }"
+			   		 show-button-bar="false" required/> 
+					<span class="input-group-btn">
+			   			<button type="button" class="btn btn-default" ng-click="isOpened = !isOpened;format='dd/MM/yyyy'">
+			  				<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+				</p>
+				<p ng-show="(addNewContract.issuedate.$invalid && submitted == true && !addNewContract.issuedate.$error.required)"
+				class="help-block">Invalid issue date.</p>
+				<p ng-show="(addNewContract.issuedate.$error.required && submitted==true)"
+				class="help-block">Issue date is required.</p>
+			</div>		
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3 lblSite"> Start Date*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewContract.startdate.$invalid && submitted==true && !addNewContract.startdate.$error.required) || (addNewContract.startdate.$error.required && submitted==true) || ((issuedate > startdate) && submitted==true ) }">
+				<p class="input-group">
+					<input id="startdate" type="text" name="startdate" class="form-control"
+					 uib-datepicker-popup="{{format}}" is-open="isOpened1" ng-model="startdate"
+			   		 ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+			   		 close-text="Close" datepicker-options="{ showWeeks:false }"
+			   		 show-button-bar="false" required/> 
+					<span class="input-group-btn">
+			   			<button type="button" class="btn btn-default" ng-click="isOpened1 = !isOpened1;format='dd/MM/yyyy'">
+			  				<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+				</p>
+				<p ng-show="(addNewContract.startdate.$invalid && submitted == true && !addNewContract.startdate.$error.required)"
+				class="help-block">Invalid start date.</p>
+				<p ng-show="(addNewContract.startdate.$error.required && submitted == true )"
+				class="help-block">Start date is required.</p>
+				<p ng-if="(issuedate > startdate) && submitted==true" class="error">Start date should not be earlier than issue date.</p>
+			</div>		
+		</div>
+		
+		<div class="row form-group">
+			<label class="col-xs-3 lblSite">Expiry Date*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewContract.enddate.$invalid && submitted==true && !addNewContract.enddate.$error.required) || (addNewContract.enddate.$error.required && submitted==true) || ((startdate > enddate) && submitted==true)}">
+				<p class="input-group">
+					<input type="text" name="enddate" class="form-control" 
+					 uib-datepicker-popup="{{format}}" is-open="isOpened2" ng-model="enddate"
+			   		 ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+			   		 close-text="Close" datepicker-options="{ showWeeks:false }"
+			   		 show-button-bar="false" required/> 
+					<span class="input-group-btn">
+			   			<button type="button" class="btn btn-default" ng-click="isOpened2 = !isOpened2;format='dd/MM/yyyy'">
+			  				<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+				</p>
+				<p ng-show="(addNewContract.enddate.$invalid && submitted == true && !addNewContract.enddate.$error.required)"
+				class="help-block">Invalid expiry date.</p>
+				<p ng-show="(addNewContract.enddate.$error.required && submitted == true )"
+				class="help-block">Expiry date is required.</p>
+				<p ng-if="(startdate > enddate) && submitted==true" class="error">Expiry Date should not be earlier than start date.</p>
+			</div>		
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3 lblSite">Upload</label>
+			<div class="col-xs-9" ng-class="{ 'col-xs-6' : isContractFileUploading,'has-error' : iscontractFileFailed , 'has-success':contractFileUploaded}">
+				<input name="contractFile" class="form-control"
+				ng-model='contractFile' nv-file-select
+				uploader="contractFileUploader" type="file"
+				value="1st floor" filters="fileuploadfilter">
+			<p ng-if="iscontractFileFailed" class="help-block">Upload failed! Please upload file with size less than 5MB.</p>
+			<p ng-if="!iscontractFileFailed && !contractFileUploaded" class="help-block">Please upload an image or PDF file with size less than 5MB.</p>
+			<p ng-if="contractFileUploaded" class="help-block">Contract file uploaded.</p>
+			</div>
+			</div>
+		</div>
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button"  ng-disabled="selectedSite.id==undefined"  ng-click="ok('addNewContract')">Add</button>
+	</div>
+</script>
+<script type="text/ng-template" id="deleteContract.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" ><span class="col-xs-9 elipsis remove_left_right_padding "> Delete Contract - {{data.data.referenceNo }}</span></span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+	</div>
+	<form name="deleteContract" ng-init="submitted=false;">
+	<div class="modal-body">
+		<label>Do you really want to Delete?</label>
+	</div>
+	<div class="modal-footer">
+		<button style="width:12%" class="btn btn-default" type="button" ng-click="cancel()">No</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('DELETE_CONTRACT')">Yes</button>
+	</div>
+	</form>
+	</script>

@@ -1,0 +1,28 @@
+
+<div class="pull-right">
+<span ng-if="pages.length >=1" style="float : left;margin-top : 7px; margin-right : 10px" class="pagination-label">
+{{ range.lower }} - {{ range.upper }} of {{ range.total }}
+</span>
+<!-- <span ng-if="pages.length<1" style="float : left;margin-top : 7px; margin-right : 10px" class="pagination-label">
+{{ range.lower-1 }} - {{ range.upper }} of {{ range.total }}
+</span> -->
+<!-- boundaryLinks -->
+<ul style="margin : 0px" class="pagination" ng-if="1 >= pages.length || !autoHide">
+    <li ng-if="range.total>40" ng-class="{ disabled : pagination.current == 1 }">
+        <a href="" ng-click="setCurrent(1)">&lsaquo;&lsaquo;</a>
+    </li>
+    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 , hidden:pages.length<1}">
+        <a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a>
+    </li>
+    <li ng-repeat="pageNumber in pages" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
+        <a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
+    </li>
+
+    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last, hidden:pages.length<1 }">
+        <a href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a>
+    </li>
+    <li ng-if="range.total>40"  ng-class="{ disabled : pagination.current == pagination.last }">
+        <a href="" ng-click="setCurrent(pagination.last)">&rsaquo;&rsaquo;</a>
+    </li>
+</ul>
+</div>

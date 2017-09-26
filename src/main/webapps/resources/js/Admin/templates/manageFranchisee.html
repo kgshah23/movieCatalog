@@ -1,0 +1,265 @@
+<div ng-controller="manageFranchiseeCtrl">
+	<div class="row">
+		<div class="col-xs-3 title">Manage Franchisee</div>
+		<div class="pull-right col-xs-5">
+		
+
+		
+			<div class="col-xs-5 remove_right_padding pull-right">
+				<div class="input-group">
+					<input type="text" class="form-control"  ng-model="keyword" name="search" ng-keyup="fillFranchiseeTable()" ng-keypress="enterKeyEvent($event,'Manage_Franchisee')"
+						placeholder="Search" autofocus>
+					<span ng-click='getFranchiseesBySearch(1)' class="input-group-addon search_btn"><i
+						class="glyphicon glyphicon-search"></i></span>
+				</div>
+			</div>
+			
+			<div class="col-xs-2 remove_left_right_padding pull-right">
+				<div class="btn-group width_100perc" uib-dropdown uib-keyboard-nav is-open="status1.isopen">
+					<button id="records-button" type="button"
+						class="btn btn-default form-control" uib-dropdown-toggle
+						ng-disabled="disabled">
+						<span>{{countPerPage}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span
+							class="caret"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu" aria-labelledby="records-button" class="min_width_60perc">
+						<li ng-click="countPerPage=10; getUsers();" role="menuitem"><a href="">10</a></li>
+						<li ng-click="countPerPage=20; getUsers();" role="menuitem"><a href="">20</a></li>
+						<li ng-click="countPerPage=50; getUsers();" role="menuitem"><a href="">50</a></li>
+						<li ng-click="countPerPage=100; getUsers();" role="menuitem"><a href="">100</a></li>
+					</ul>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<br>
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<th>Franchisee Name<span
+					class="glyphicon sort-icon" ng-show="sortKey=='Name'"
+					ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+				<th>Address</th>
+				<th>City</th>
+				<th>State</th>
+				<th>Pincode</th>
+				<th>Sites</th>
+				<th>Created On</th>
+				<th>Status</th>
+				<th>Country</th>
+				<th class="actions_column">Actions</th>
+			</thead>
+			
+			<tbody>
+				<tr dir-paginate="franchise in franchisees | itemsPerPage: countPerPage"
+					total-items="totalFranchise" current-page="pagination.current">
+					<td>{{franchise.name}}</td>
+					<td>{{franchise.address1}}</td>
+					<td>{{franchise.city}}</td>
+					<td>{{franchise.state}}</td>
+					<td>{{franchise.pincode}}</td>
+					<td>{{(franchise.siteCount == undefined)? '-' : franchise.siteCount}}</td>
+					<td>{{franchise.createdDate | date:'dd/MM/yyyy'}}</td>
+					<td>{{getStatus(franchise.status)}}</td>
+					<td>{{franchise.country}}</td>
+					<td>
+							<button ng-click="open('md','editFranchisee.html',franchise,refreshFranchisee);" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span>Edit</button>
+							<button ng-click="open('md','deleteFranchisee.html',franchise,refreshFranchisee);" class="btn btn-default margin_left_2perc"><span class="glyphicon glyphicon-trash"></span>Delete</button></td>
+				</tr>
+				<tr ng-show="!franchisees.length"><td colspan="10" class="text-center">No Records Found</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<button ng-click="open('md','addNewFranchisee.html','',refreshFranchiseeForDelete,$event);" type="button" class="btn btn-default">
+		<span class="glyphicon glyphicon-plus"></span>Add New Franchisee
+	</button> &nbsp;&nbsp;&nbsp;
+	<dir-pagination-controls
+		on-page-change="getFranchisee(newPageNumber)"
+		template-url="/core/resources/js/Common/templates/dirPagination.html"></dir-pagination-controls>
+</div>
+<script type="text/ng-template" id="addNewFranchisee.html" >
+	<div class="modal-header">
+		<span class="modal-title">Add New Franchisee<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form  name="addNewFranchisee" ng-keypress="enterKeyEvent($event,'ADD_FRANCHISEE')" ng-init="submitted=false;">
+		<div class="row form-group">
+			<label class="col-xs-3">Name*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewFranchisee.name.$error.pattern && submitted==true) || (addNewFranchisee.name.$error.required  && submitted==true) }">
+				<input type="text"  maxlength=100 ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/" name="name" class="form-control elipsis" ng-model="name" required autofocus>
+				<p ng-show="(addNewFranchisee.name.$error.pattern && submitted==true)"  class="help-block">Invalid name.</p>
+				<p ng-show="(addNewFranchisee.name.$error.required  && submitted==true)"  class="help-block">Name is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Address 1*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : addNewFranchisee.address1.$error.required && submitted==true }">
+				<input type="text"  maxlength=256  name="address1" class="form-control" ng-model="address1" required>
+				<p ng-show="addNewFranchisee.address1.$error.required && submitted==true"  class="help-block">Primary address is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Address 2</label>
+			<div class="col-xs-9">
+				<input type="text" maxlength=256 name="address2" class="form-control" ng-model="address2">
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">City*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewFranchisee.city.$error.pattern && submitted == true) || (addNewFranchisee.city.$error.required && submitted == true) }">
+				<input type="text" maxlength=32 ng-pattern="/^[a-zA-Z\s]*$/" name="city" class="form-control" ng-model="city" required>
+				<p ng-show="addNewFranchisee.city.$error.pattern && submitted == true"  class="help-block">Invalid city.</p>
+				<p ng-show="(addNewFranchisee.city.$error.required && submitted == true)"  class="help-block">City is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">State*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewFranchisee.state.$error.pattern && submitted == true) || (addNewFranchisee.state.$error.required && submitted == true)}">
+				<input type="text" maxlength=32 ng-pattern="/^[a-zA-Z\s]*$/" name="state" class="form-control" ng-model="state" required>
+				<p ng-show="(addNewFranchisee.state.$error.pattern && submitted == true)"  class="help-block">Invalid state.</p>
+				<p ng-show="(addNewFranchisee.state.$error.required && submitted == true)"  class="help-block">State is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3"> Pincode*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewFranchisee.pincode.$error.pattern && submitted==true) || (addNewFranchisee.pincode.$error.required && submitted==true) ||  (addNewFranchisee.pincode.$error.minlength && submitted==true && !addNewFranchisee.pincode.$error.pattern)}">
+				<input type="text"  name="pincode" ng-pattern="/^[0-9]*$/"  class="form-control" ng-model="pincode" minlength=6 maxlength=6 required>
+				<p ng-show="(addNewFranchisee.pincode.$error.pattern && submitted==true)"  class="help-block">Invalid pincode.</p>
+				<p ng-show="(addNewFranchisee.pincode.$error.minlength && submitted==true && !addNewFranchisee.pincode.$error.pattern)"  class="help-block">Pincode must have only 6 digits.</p>
+				<p ng-show="(addNewFranchisee.pincode.$error.required && submitted==true)"  class="help-block">Pincode is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Country*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : addNewFranchisee.country.$invalid && !addNewFranchisee.country.$pristine }">
+				<select class='form-control' name="country" ng-model="country">
+					<option value ={{country}} ng-repeat='country in countries'>{{country}}</option>
+				</select>
+				<p ng-show="addNewFranchisee.country.$invalid && !addNewFranchisee.country.$pristine"  class="help-block">Country is required.</p>
+			</div>
+		</div>
+
+
+
+
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button"  ng-click="ok('ADD_FRANCHISEE')">Add</button>
+	</div>
+</script>
+<script type="text/ng-template" id="editFranchisee.html" >
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Edit Franchisee - {{name}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+		
+	</div>
+	<div class="modal-body">
+		<form  name="editFranchisee" ng-keypress="enterKeyEvent($event,'EDIT_FRANCHISEE')" ng-init="submitted=false;">
+		<div class="row form-group">
+			<label class="col-xs-3">Name*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (editFranchisee.name.$error.required  && submitted==true) }">
+				<input disabled=disabled maxlength=100 type="text"  name="name" class="form-control elipsis" ng-model="name" required>
+				<p ng-show="(editFranchisee.name.$error.required  && submitted==true)"  class="help-block">Name is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Address 1*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (editFranchisee.address1.$error.required  && submitted==true)}">
+				<input type="text" maxlength=256 name="address1" class="form-control" ng-model="address1" required autofocus>
+				<p ng-show="(editFranchisee.address1.$error.required  && submitted==true)"  class="help-block">Primary address is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Address 2</label>
+			<div class="col-xs-9">
+				<input type="text" maxlength=256 name="address2" class="form-control" ng-model="address2">
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">City*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (editFranchisee.city.$error.pattern && submitted==true) || (editFranchisee.city.$error.required && submitted==true)}">
+				<input type="text" maxlength=32 ng-pattern="/^[a-zA-Z\s]*$/" name="city" class="form-control" ng-model="city" required>
+				<p ng-show="(editFranchisee.city.$error.pattern && submitted==true)"  class="help-block">Invalid city.</p>
+				<p ng-show="(editFranchisee.city.$error.required && submitted==true)"  class="help-block">City is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">State*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (editFranchisee.state.$error.pattern && submitted==true) ||  (editFranchisee.state.$error.required && submitted==true) }">
+				<input type="text" maxlength=32 ng-pattern="/^[a-zA-Z\s]*$/" name="state" class="form-control" ng-model="state" required>
+				<p ng-show="(editFranchisee.state.$error.pattern && submitted==true)"  class="help-block">Invalid state.</p>
+				<p ng-show="(editFranchisee.state.$error.required && submitted==true)"  class="help-block">State is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3"> Pincode*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (editFranchisee.pincode.$error.pattern && submitted==true) ||  (editFranchisee.pincode.$error.required && submitted==true) || (editFranchisee.pincode.$error.minlength && submitted==true && !editFranchisee.pincode.$error.pattern) }">
+				<input type="text"  name="pincode"  ng-pattern="/^[0-9]*$/"  class="form-control" ng-model="pincode" minlength=6 maxlength=6 required>
+				<p ng-show="(editFranchisee.pincode.$error.pattern && submitted==true)"  class="help-block">Invalid pincode.</p>
+				<p ng-show="(editFranchisee.pincode.$error.required && submitted==true)"  class="help-block">Pincode is required.</p>
+				<p ng-show="(editFranchisee.pincode.$error.minlength && submitted==true && !editFranchisee.pincode.$error.pattern)"  class="help-block">Pincode must have only 6 digits.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Country*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : editFranchisee.country.$invalid && !editFranchisee.country.$pristine }">
+				<select class='form-control' name="country" ng-model="country">
+					<option value ={{country}} ng-repeat='country in countries'>{{country}}</option>
+				</select>
+				<p ng-show="editFranchisee.country.$invalid && !editFranchisee.country.$pristine"  class="help-block">Country is required.</p>
+			</div>
+		</div>
+
+
+
+
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('EDIT_FRANCHISEE')">Save</button>
+	</div>
+</script>
+<script type="text/ng-template" id="deleteFranchisee.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Delete Franchisee- {{data.data.name}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+	</div>
+	<form name="deleteUser" ng-init="submitted=false;">
+	<div class="modal-body">
+		<label>Do you really want to Delete?</label>
+	</div>
+	<div class="modal-footer">
+		<button style="width:12%" class="btn btn-default" type="button" ng-click="cancel()">No</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('DELETE_FRANCHISEE')">Yes</button>
+	</div>
+	</form>
+</script>

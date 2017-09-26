@@ -1,0 +1,100 @@
+
+<div class="login_container">
+	<div class="container " ng-controller="LoginCtrl">
+		<div class="row">
+			<div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-4 co-md-offset-4 col-lg-4 col-lg-offset-4 ">
+				<div class="text-center loginheader">Login</div>
+				<div class="login_form">
+
+					<form role="form" name="loginForm" ng-submit="login()"
+						ng-init="submitted=false;" novalidate>
+						<!-- <input style="display:none">
+					<input type="password" style="display:none"> -->
+						<div class="form-group"
+							ng-class="{ 'has-error' : (loginForm.username.$error.pattern && submitted==true) || (loginForm.username.$error.required && submitted==true) }">
+							<div class="input-group">
+								<span class=" input-group-addon"><i
+									class="glyphicon glyphicon-user"></i></span> <input tabindex="1"
+									type="text" maxlength=50 class="form-control" id="username"
+									name="username" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+									autofocus placeholder="Email" ng-model="username" required>
+							</div>
+							<p
+								ng-show="(loginForm.username.$error.pattern && submitted==true)"
+								class="help-block">Invalid email.</p>
+							<p
+								ng-show="(loginForm.username.$error.required && submitted==true)"
+								class="help-block">Email is required.</p>
+						</div>
+						<div class="form-group"
+							ng-class="{ 'has-error' : (loginForm.password.$error.pattern && submitted==true) || (loginForm.password.$error.required && submitted==true) || (loginForm.password.$error.minlength && !loginForm.password.$error.pattern && submitted==true)}">
+							<div class="input-group">
+								<span class="input-group-addon"><i
+									class="glyphicon glyphicon-lock"></i></span> <input tabindex="2"
+									type="password" minlength=7 class="form-control" id="password" maxlength=100
+									name="password" placeholder="Password" ng-pattern="/^\S*$/"
+									ng-model="password" required>
+							</div>
+							<p
+								ng-show="(loginForm.password.$error.pattern && submitted==true)"
+								class="help-block">Invalid password.</p>
+							<p
+								ng-show="(loginForm.password.$error.required && submitted==true)"
+								class="help-block">Password is required.</p>
+							<p
+								ng-show="(loginForm.password.$error.minlength && !loginForm.password.$error.pattern && submitted==true)"
+								class="help-block">Password must have at least 7 characters.</p>
+						</div>
+						<div class="form-group">
+							<!-- <span class="formText  pull-left"> <input type="checkbox"
+								value="remember-me"> Remember me
+							</span> -->
+							<a style="cursor: pointer" tabindex="3"
+								ng-keypress="enterKeyEvent($event,'FORGOT_PASSWORD')"
+								ng-click="open('md','forgotPassword.html','','',$event);"
+								class="pull-right resetlink">Forgot Password? </a> <span
+								class="clearfix"></span>
+						</div>
+						<div class="form-group ">
+							<button class="btn btn-primary loginBtn" type="submit">Login</button>
+
+						</div>
+					</form>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/ng-template" id="forgotPassword.html">
+	<div class="modal-header">
+		<span class="modal-title"><span ng-hide="isPasswordExpired">Forgot Password</span><span ng-show="isPasswordExpired">Reset Password</span><span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form name="resetForm" ng-keypress="enterKeyEvent($event,'RESET_PASSWORD')" novalidate ng-init="submitted=false;">
+			<div ng-show="isPasswordExpired" class="row form-group">
+				<label class="blue_label help-block" style="color:#a94442;" > Your password has been expired, please reset your password.</label>
+			</div>
+			<div class="row form-group">
+				<label class="blue_label "> Please enter your email to get password.</label>
+			</div>
+			
+			<div class="row form-group" ng-class="{ 'has-error' : (resetForm.emailInput.$error.pattern && submitted==true)  || (resetForm.emailInput.$error.required && submitted==true)}">
+				<input ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"  class="modalResetText form-control" id="inputdefault" name="emailInput" type="text" maxlength=50  placeholder="Email" ng-model="email" required >
+				<p ng-show="(resetForm.emailInput.$error.required && submitted==true)"
+				   style="margin-left:12px" class="help-block">Email is required.</p>
+				<p ng-show="(resetForm.emailInput.$error.pattern && submitted==true) "
+				  style="margin-left:12px" class="help-block">Invalid email.</p>
+			</div>
+		</form>
+
+
+
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default btnCancel" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('RESET_PASSWORD')" >Submit</button>
+	</div>
+	</script>

@@ -1,0 +1,2088 @@
+
+<div ng-controller="siteDetailsCtrl">
+	<div class="row">
+		<div class="col-xs-3 ">
+			<h3 class="title elipsis">{{site.name}}</h3>
+		</div>
+	</div>
+	
+	<form name="SiteInfo" ng-init="SiteInfoSubmitted=false;" novalidate>
+
+		<div class="CollapseDiv ">
+			<div class="subheaderDiv">
+				<h5 class="subheaderCustomer">
+					<a class="linkCursor" ng-click="collapsedInfo()">
+						<i id="up" ng-show="iscollapsedInfo" class="glyphicon glyphicon-chevron-up"></i>
+							<i class="glyphicon glyphicon-chevron-down" id="down" ng-show="!iscollapsedInfo"></i>Info</a>
+				</h5>
+				<div class="details">
+					<div collapse="!iscollapsedInfo">
+						<div class="row">
+							<div class="col-xs-6">
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">Name*</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (SiteInfo.name.$error.pattern && SiteInfoSubmitted==true) || (SiteInfo.name.$error.required && SiteInfoSubmitted==true)  }">
+										<input type="text" class="form-control elipsis" id="sitename" maxlength=100
+											ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/" ng-model="site.name" name="name"
+											ng-disabled="siteInfofieldDisabled" required>
+										<p ng-show="(SiteInfo.name.$error.pattern && SiteInfoSubmitted==true)" class="help-block">Invalid name.</p>
+										
+										<p ng-show="(SiteInfo.name.$error.required && SiteInfoSubmitted==true)"
+											class="help-block">Name is required.</p>
+										
+									</div>
+								</div>
+
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">Address*</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (SiteInfo.address.$error.required && SiteInfoSubmitted==true) }">
+										<input type="text" class="form-control" maxlength=256
+											ng-model="site.address1" name="address"
+											ng-disabled="siteInfofieldDisabled" required>
+									
+										<p ng-show="(SiteInfo.address.$error.required && SiteInfoSubmitted==true)"
+											class="help-block">Address is required.</p>
+									</div>
+								</div>
+
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="city">City*</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (SiteInfo.city.$error.pattern && SiteInfoSubmitted==true) || (SiteInfo.city.$error.required && SiteInfoSubmitted==true) }">
+										<input type="text" class="form-control" ng-model="site.city" maxlength=32
+											ng-pattern="/^[a-zA-Z\s]*$/" name="city"
+											ng-disabled="siteInfofieldDisabled" required>
+										<p ng-show="(SiteInfo.city.$error.pattern && SiteInfoSubmitted==true)" class="help-block">
+											Invalid city.
+										</p>
+										
+										<p ng-show="(SiteInfo.city.$error.required && SiteInfoSubmitted==true)"
+											class="help-block">City is required.</p>
+										
+									</div>
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="city">State*</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (SiteInfo.State.$error.pattern && SiteInfoSubmitted==true) || (SiteInfo.State.$error.required && SiteInfoSubmitted==true) }">
+										<input type="text" class="form-control" ng-model="site.state" maxlength=32
+											ng-pattern="/^[a-zA-Z\s]*$/" name="State"
+											ng-disabled="siteInfofieldDisabled" required>
+										<p ng-show="(SiteInfo.State.$error.pattern && SiteInfoSubmitted==true)" class="help-block">
+											Invalid state.
+										</p>
+										
+										<p ng-show="(SiteInfo.State.$error.required && SiteInfoSubmitted==true)"
+											class="help-block">State is required.</p>
+										
+									</div>
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">Firetweet Users</label>
+									</div>
+									<div class="col-xs-7">
+										<ui-select multiple="true"  ng-model="multipleList.selectedFTUsers"
+											name="ftusers" theme="select2"
+											ng-disabled="disableFTUsers" style="width:100%;">
+										<ui-select-match placeholder="Select FT users">{{$item.firstName}}
+										&nbsp; {{$item.lastName}}</ui-select-match> <ui-select-choices
+											repeat="ftuser in  FTUsers | propsFilter: {firstName: $select.search,lastName: $select.search}">
+										<div
+											ng-bind-html="ftuser.firstName +' '+ ftuser.lastName | highlight: $select.search"></div>
+										<!-- <small>  name: {{user.firstName}}
+										</small> --> </ui-select-choices> </ui-select>
+									</div>
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">Customer Users</label>
+									</div>
+									<div class="col-xs-7">
+										<div class="btn-group dropdown width_100perc" uib-dropdown uib-keyboard-nav is-open="status5.isopen"
+											>
+											<button id="records-button" type="button"
+												class="btn btn-default form-control" uib-dropdown-toggle
+												ng-disabled="disableCustomer">
+												<span class="pull-left">{{customerFilter}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span
+													class="pull-right caret dropdown_caret"></span>
+											</button>
+											<ul class="pull-left scrollable-menu" uib-dropdown-menu  role="menu" 
+												aria-labelledby="records-button">
+												<li ng-click="updateCustomer()"><a href="">Select customer user</a></li>
+												<li ng-repeat="customer in  customerUsers"
+													ng-click="updateCustomer(customer)"><a href="">{{customer.firstName
+														+ " "+ customer.lastName }} </a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-xs-6">
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="name">Stage</label>
+									</div>
+									<div class="col-xs-7">
+										<div class="btn-group" uib-dropdown uib-keyboard-nav is-open="status1.isopen"
+											style="width: 100%">
+											<button id="records-button" type="button"
+												class="btn btn-default form-control" uib-dropdown-toggle
+												ng-disabled="siteInfofieldDisabled && siteStageDisabled">
+												<span class="pull-left">{{siteStage.name}}</span>&nbsp;<span
+													class="pull-right caret dropdown_caret"></span>
+											</button>
+											<ul uib-dropdown-menu role="menu"
+												aria-labelledby="records-button">
+												<li ng-click="siteStage = {id : 1,name : 'Audit'}"><a href="">Audit</a></li>
+												<li ng-click="siteStage = {id : 2,name : 'Installation'}"><a href="">Installation</a></li>
+												<li ng-click="siteStage = {id : 3,name : 'Online'}"><a href="">Online</a></li>
+												<li ng-click="siteStage = {id : 4,name : 'Test'}"><a href="">Test</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4 remove_right_padding">
+										<label for="name">FAS Compliance certificate</label>
+									</div>
+									<div ng-if="(uploadFas|| site.fasComplianceCertificate==null)" class="col-xs-7" ng-class="{'col-xs-6': isfasComplianceCertificateUploading,'has-error' : isfasComplianceCertificateFailed,'has-success':fascertFileUploaded}">
+										<div  ng-class="{ 'input-group' :  !fascertFileUploaded && site.fasComplianceCertificate!=null}">
+										      <input id="fasFile" name="fasComplianceCertificate" nv-file-select
+											uploader="fasComplianceCertificateUploader"
+											 class="form-control"
+											type="file" filters="fileuploadfilter" ng-disabled="siteInfofieldDisabled">
+										   <span ng-if="!fascertFileUploaded && site.fasComplianceCertificate!=null" ng-click="makeFasUpload(false)" style="font-size: 14px" class="input-group-addon search_btn cancel_fileupload  glyphicon glyphicon-remove position_static"></span>
+										</div>
+										<p ng-if="isfasComplianceCertificateFailed" class="help-block">Upload failed! Please upload an image or PDF file with size less than 5MB.</p>
+										<p ng-if="!isfasComplianceCertificateFailed && !fascertFileUploaded" class="help-block">Please upload an image or PDF file with size less than 5MB.</p>
+										<p ng-if="fascertFileUploaded" class="help-block">FAS Compliance certificate file uploaded.</p>
+
+									</div>
+
+									<div ng-if="isfasComplianceCertificateUploading && (uploadFas|| site.fasComplianceCertificate==null)"
+										class="col-xs-1 spinr-container">
+										<div class="spinr"></div>
+									</div>
+									
+									<div ng-if="!uploadFas && site.fasComplianceCertificate!=null" class="col-xs-7">
+											<div ng-class="{ 'col-xs-12' :  siteInfofieldDisabled}" class="input-group">
+										      <input ng-model="fasComplianceCertificate" ng-disabled="siteInfofieldDisabled" type="text" ng-model="customer.firedetectionFile" class="form-control" id="inputGroupSuccess3" readonly="readonly" aria-describedby="inputGroupSuccess3Status">
+										    
+										      <span ng-if="!siteInfofieldDisabled" ng-click="makeFasUpload(true)" class="input-group-addon search_btn glyphicon glyphicon-pencil position_static" title="Edit Choosen File"></span>
+										    </div>
+									</div>
+									
+									
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4 remove_right_padding">HS Compliance 
+										certificate</div>
+									<div ng-if="uploadHs || site.hsComplianceCertificate==null" class="col-xs-7" ng-class="{'col-xs-6': ishsComplianceCertificateUploading,'has-error' : ishsComplianceCertificateFailed, 'has-success':hsFileUploaded}">
+										
+										<div  ng-class="{ 'input-group' :  !hsFileUploaded && site.hsComplianceCertificate!=null}">
+										     <input id="hsFile" name="hsComplianceCertificate" nv-file-select
+											uploader="hsComplianceCertificateUploader"
+											ng-model="site.hsComplianceCertificate" class="form-control"
+											type="file" filters="fileuploadfilter" ng-disabled="siteInfofieldDisabled">
+										   <span ng-if="!hsFileUploaded && site.hsComplianceCertificate!=null" ng-click="makeHsUpload(false)" style="font-size: 14px" class="input-group-addon search_btn cancel_fileupload  glyphicon glyphicon-remove position_static"></span>
+										</div>
+
+										<p ng-if="ishsComplianceCertificateFailed" class="help-block">Upload failed! Please upload an image or PDF file with size less than 5MB.</p>
+										<p ng-if="!ishsComplianceCertificateFailed && !hsFileUploaded" class="help-block">Please upload an image or PDF file with size less than 5MB.</p>
+										<p ng-if="hsFileUploaded" class="help-block">HS Compliance certificate file uploaded.</p>
+
+									</div>
+
+									<div ng-if="ishsComplianceCertificateUploading && (uploadHs || site.hsComplianceCertificate==null)"
+										class="col-xs-1 spinr-container">
+										<div class="spinr"></div>
+									</div>
+									
+									<div ng-if="site.hsComplianceCertificate!=null && !uploadHs" class="col-xs-7">
+											<div ng-class="{ 'col-xs-12' :  siteInfofieldDisabled}" class="input-group">
+										      <input ng-model="hsComplianceCertificate" ng-disabled="siteInfofieldDisabled" type="text" ng-model="customer.firedetectionFile" class="form-control" id="inputGroupSuccess3" readonly="readonly" aria-describedby="inputGroupSuccess3Status">
+										    
+										      <span ng-if="!siteInfofieldDisabled" ng-click="makeHsUpload(true)" class="input-group-addon search_btn glyphicon glyphicon-pencil position_static" title="Edit Choosen File"></span>
+										    </div>
+									</div>
+									
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4 remove_right_padding">Franchisee Users</div>
+									<div class="col-xs-7">
+										<ui-select  multiple name="franchiseeusers"
+											ng-model="multipleList.selectedfranchiseUsers"
+											theme="select2" ng-disabled="disableFranchisee"
+											style="width: 100%;"> <ui-select-match
+											placeholder="Select franchisee users">{{$item.firstName}}
+										&nbsp;{{$item.lastName}}</ui-select-match> 
+										<ui-select-choices
+											repeat="franchisee in franchiseUsers | propsFilter: {firstName: $select.search, lastName: $select.search}">
+										<div
+											ng-bind-html="franchisee.firstName +' '+ franchisee.lastName | highlight: $select.search"></div>
+										</ui-select-choices> </ui-select>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<div collapse="!iscollapsedInfo">
+				<button class="btn btn-default editBtn"
+					ng-click="editSiteInfo()" ng-hide="editSiteInfoDisabled">Edit</button>
+				<button class="btn btn-default editBtn"
+					 ng-hide="saveSiteInfoDisabled"
+					ng-click="saveSiteInfo($event)">Save</button>
+					<button class="btn btn-default editBtn margin_left_1perc"
+						ng-click="cancelSiteInfo()" ng-hide="saveSiteInfoDisabled">Cancel
+					</button>
+			</div>
+		</div>
+	</form>
+
+
+	<!--*********************************************************************************** PRAGATI *************************************8-->
+	<form name="BillingInfo" ng-hide="isFTInstaller || isFranchiseAdmin || isFL2 || isFTOperator" ng-init="BillingInfoSubmitted=false;" novalidate>
+		<div class="CollapseDiv ">
+			<div class="subheaderDiv">
+				<h5 class="subheaderCustomer">
+				<a class="linkCursor" ng-click="collapsedBillingInfo()"><i id="up"
+					ng-show="iscollapsedBillingInfo" class="glyphicon glyphicon-chevron-up"></i><i
+					class="glyphicon glyphicon-chevron-down" id="down"
+					ng-show="!iscollapsedBillingInfo"></i>Billing</a>
+				</h5>
+
+
+				<div class="details">
+					<div collapse="!iscollapsedBillingInfo">
+
+						<div class="row">
+
+							<div class="col-xs-6">
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="commisionDate">Commission Date</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (BillingInfo.commisionDate.$invalid && BillingInfoSubmitted==true) || hasContracterror==true }">
+										<p class="input-group">
+											<input id="commisionDate" type="text" ng-disabled="billingFieldDisable" ng-change="compareCommisionandSitePO()"
+												name="commisionDate" class="form-control"
+												uib-datepicker-popup="{{format}}"
+												ng-model="site.commisionDate" is-open="isOpened"
+												ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+												close-text="Close" datepicker-options="{ showWeeks:false }"
+												show-button-bar="false" /> <span class="input-group-btn">
+												<button type="button" ng-disabled="billingFieldDisable"
+													class="btn btn-default"
+													ng-click="isOpened = !isOpened;format='dd/MM/yyyy'">
+													<i class="glyphicon glyphicon-calendar"></i>
+												</button>
+											</span>
+										</p>
+										<p
+											ng-show="(BillingInfo.commisionDate.$invalid && BillingInfoSubmitted==true )"
+											class="help-block">Invalid commission date.</p>
+									   <p ng-if="hasContracterror == true" class="error">Commission Date should be earlier than contract expiry date.</p>
+									</div>
+								</div>
+
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="sitePoDate">Site PO Date</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (BillingInfo.sitePoDate.$invalid && BillingInfoSubmitted==true || (haserror == true && hasContracterrorwithSitePO==false) || hasContracterrorwithSitePO == true )}">
+										<p class="input-group">
+											<input type="text" class="form-control"
+												ng-disabled="billingFieldDisable" name="sitePoDate" ng-change="compareCommisionandSitePO()"
+												uib-datepicker-popup="{{format}}" ng-model="site.sitePoDate"
+												is-open="isOpened1" close-text="Close"
+												show-button-bar="false"
+												ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+												datepicker-options="{ showWeeks:false }" /> <span
+												class="input-group-btn">
+												<button type="button" class="btn btn-default"
+													ng-disabled="billingFieldDisable"
+													ng-click="isOpened1 = !isOpened1;format='dd/MM/yyyy'">
+													<i class="glyphicon glyphicon-calendar"></i>
+												</button>
+											</span>
+										</p>
+										<p
+											ng-show="(BillingInfo.sitePoDate.$invalid && BillingInfoSubmitted==true )"
+											class="help-block">Invalid site PO date.</p>
+										<p ng-if="(haserror == true && hasContracterrorwithSitePO==false)" class="error">Site PO Date should be earlier or same as Commission Date.</p>
+										<p ng-if="hasContracterrorwithSitePO == true" class="error">Site PO Date should be earlier than contract expiry date.</p>
+									</div>
+								</div>
+
+								<!-- <div class="row form-group">
+									<div class="col-xs-4">
+										<label for="contractExpiryDate">Contract expiry Date</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (BillingInfo.contractExpiryDate.$invalid && BillingInfoSubmitted==true || haserrorInContract == true) }">
+										<p class="input-group">
+											<input type="text" class="form-control" ng-change="compareDateForContract()"
+												name="contractExpiryDate" ng-disabled="billingFieldDisable"
+												ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+												uib-datepicker-popup="{{format}}"
+												ng-model="site.contractExpiryDate" is-open="isOpened2"
+												close-text="Close" show-button-bar="false"
+												datepicker-options="{ showWeeks:false }" /> <span
+												class="input-group-btn">
+												<button type="button" class="btn btn-default"
+													ng-disabled="billingFieldDisable"
+													ng-click="isOpened2 = !isOpened2;format='dd/MM/yyyy'">
+													<i class="glyphicon glyphicon-calendar"></i>
+												</button>
+											</span>
+										</p>
+										<p
+											ng-show="(BillingInfo.contractExpiryDate.$invalid && BillingInfoSubmitted==true ) "
+											class="help-block">Invalid contract expiry date.</p>
+										<p ng-if="haserrorInContract == true" class="error">Contract expiry date should not be earlier or same as commission date and site PO date.</p>
+									</div>
+								</div>-->
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="lastBilledDate">Last Billed Date</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (BillingInfo.lastBilledDate.$invalid && BillingInfoSubmitted==true ) || (haserrorInBilling == true && hasContracterrorwithlastBilled==false) || (hasContracterrorwithlastBilled==true) }">
+										<p class="input-group">
+											<input type="text" class="form-control" ng-change="compareDateForBilling()"
+												ng-disabled="billingFieldDisable" name="lastBilledDate"
+												uib-datepicker-popup="{{format}}"
+												ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+												ng-model="site.lastBilledDate" is-open="isOpened3"
+												close-text="Close" show-button-bar="false"
+												datepicker-options="{ showWeeks:false}" /> <span
+												class="input-group-btn">
+												<button type="button" class="btn btn-default"
+													ng-disabled="billingFieldDisable"
+													ng-click="isOpened3 = !isOpened3;format='dd/MM/yyyy'">
+													<i class="glyphicon glyphicon-calendar"></i>
+												</button>
+											</span>
+										</p>
+										<p
+											ng-show="(BillingInfo.lastBilledDate.$invalid && BillingInfoSubmitted==true ) "
+											class="help-block">Invalid last billed date.</p>
+										<p ng-if="(haserrorInBilling == true && hasContracterrorwithlastBilled==false)" class="error">Last billed date should not be earlier than commission date and site PO date.</p>
+										<p ng-if="(hasContracterrorwithlastBilled==true)" class="error">Last billed date should be earlier or same as contract expiry date.</p>
+									</div>
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="lastPreventiveMaintDate">Last Preventive
+											Maint Date</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : (BillingInfo.lastPreventiveMaintDate.$invalid && BillingInfoSubmitted==true ) || haserrorInPreventive == true}">
+										<p class="input-group">
+											<input type="text" class="form-control" ng-change="compareDateForPrevetive()"
+												ng-disabled="billingFieldDisable"
+												name="lastPreventiveMaintDate"
+												uib-datepicker-popup="{{format}}"
+												ng-pattern="/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/"
+												ng-model="site.lastPreventiveMaintDate" is-open="isOpened4"
+												close-text="Close" datepicker-options="{showWeeks:false}"
+												show-button-bar="false" /> <span class="input-group-btn">
+												<button type="button" class="btn btn-default"
+													ng-disabled="billingFieldDisable"
+													ng-click="isOpened4 = !isOpened4;format='dd/MM/yyyy'">
+													<i class="glyphicon glyphicon-calendar"></i>
+												</button>
+											</span>
+										</p>
+										<p
+											ng-show="(BillingInfo.lastPreventiveMaintDate.$invalid && BillingInfoSubmitted==true ) "
+											class="help-block">Invalid last preventive maint date.</p>
+										<p ng-if="haserrorInPreventive == true" class="error">Last preventive maint date should not be earlier or same as commission date and site PO date.</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-xs-6">
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="billingPeriod">Billing Period</label> <!--  ng-model="site.billingPeriod" -->
+									</div>
+									<div class="col-xs-7" data-tip="Billing Period in days"
+										ng-class="{ 'has-error' : BillingInfo.billingPeriod.$error.pattern && BillingInfoSubmitted==true }">
+										<input type="text" class="form-control" value=30
+											ng-disabled=true name="billingPeriod"
+											 ng-pattern="/^[0-9]*$/">
+										<p
+											ng-show="BillingInfo.billingPeriod.$error.pattern && BillingInfoSubmitted==true"
+											class="help-block">Invalid billing period.</p>
+									</div>
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="billingRate">Billing Rate</label>
+									</div>
+									<div class="col-xs-7"
+										ng-class="{ 'has-error' : BillingInfo.billingRate.$error.pattern && BillingInfoSubmitted==true }">
+										<input type="text" class="form-control"
+											ng-disabled="billingFieldDisable" name="billingRate"
+											ng-pattern="/^[0-9]+([.][0-9]+)?$/"
+											ng-model="site.billingRate">
+										<p
+											ng-show="BillingInfo.billingRate.$error.pattern && BillingInfoSubmitted==true"
+											class="help-block">Invalid billing rate.</p>
+									</div>
+								</div>
+								<div class="row form-group"
+									ng-class="{ 'has-error' : BillingInfo.preventiveMaintPeriod.$error.pattern && BillingInfoSubmitted==true }">
+									<div class="col-xs-4">
+										<label for="preventiveMaintPeriod">Preventive Maint
+											Period</label>
+									</div>
+									<div class="col-xs-7" data-tip="Preventive Maint Period in days">
+										<input type="text" class="form-control"
+											ng-disabled="billingFieldDisable"
+											name="preventiveMaintPeriod" ng-pattern="/^[0-9]*$/"
+											ng-model="site.preventiveMaintPeriod">
+										<p
+											ng-show="BillingInfo.preventiveMaintPeriod.$error.pattern && BillingInfoSubmitted==true"
+											class="help-block">Invalid preventive maint period.</p>
+									</div>
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-4">
+										<label for="nextPreventiveMaintDate">Next Preventive
+											Maint Date</label>
+									</div>
+									<div class="col-xs-7">
+										<input type="text" class="form-control"
+											uib-datepicker-popup="dd/MM/yyyy"
+											ng-model="site.nextPreventiveMaintDate"
+											name="site.nextPreventiveMaintDate" ng-disabled="true">
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div collapse="!iscollapsedBillingInfo">
+			<button class="btn btn-default"
+				style="width: 142px; height: 28px; padding: 0%; text-align: center"
+				ng-click="enableBillingFormfilelds()"
+				ng-hide="editBillingDisable">Edit</button>
+		<!-- 	<button class="btn btn-default" ng-disabled="saveBillingDisabled"
+				style="width: 142px; margin-left: 2%; padding: 0%; height: 28px; text-align: center"
+				ng-click="saveBillingInfo($event)">Save</button> -->
+				<button class="btn btn-default editBtn"
+					 ng-hide="saveBillingDisabled"
+					ng-click="saveBillingInfo($event)">Save</button>
+					<button class="btn btn-default editBtn margin_left_1perc"
+						ng-click="cancelBillingInfo()" ng-hide="saveBillingDisabled">Cancel
+					</button>
+		</div>
+	</form>
+
+	<div class="CollapseDiv">
+		<div class="subheaderDiv">
+			<h5 class="subheaderCustomer">
+				<a class="linkCursor" ng-click="collapsedContacts()"><i id="up"
+					ng-show="iscollapsedContacts" class="glyphicon glyphicon-chevron-up"></i><i
+					class="glyphicon glyphicon-chevron-down" id="down"
+					ng-show="!iscollapsedContacts"></i>Contacts</a>
+			</h5>
+
+			<div class="details">
+				<div collapse="!iscollapsedContacts">
+					<form name=contactsForm>
+						<form></form>
+						<div class="row">
+
+							<div class="col-xs-6">
+								<form name="primaryForm">
+									<div class="row col-xs-12">
+										<p class="contact">Primary Contact</p>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Name</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (primaryForm.name.$error.pattern && primaryContact.modified == true && submitcontact==true) || (primaryForm.name.$error.required && primaryContact.modified == true && submitcontact==true)}">
+											<input ng-keyup='setModified(1)' id="primaryContact"  name="name" maxlength=100
+												ng-pattern="/^[a-zA-Z\.\s]*$/" ng-model='primaryContact.name' ng-required="sitePrimaryContactInfoExists || primaryContact.email || primaryContact.cellPhone"
+												class="form-control elipsis" type="text"
+												ng-disabled="fieldDisabledContact">
+											<p
+												ng-show="(primaryForm.name.$error.pattern && primaryContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid name.</p>
+											<p
+												ng-show="(primaryForm.name.$error.required && primaryContact.modified == true &&  submitcontact==true)"
+												class="help-block">Name is required.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="email">Email</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' :(primaryForm.email.$error.pattern && primaryContact.modified == true && submitcontact==true)}">
+											<input ng-keyup='setModified(1)'  name="email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+												ng-model='primaryContact.email' class="form-control elipsis" maxlength=100
+												type="text" ng-disabled="fieldDisabledContact">
+											<p
+												ng-show="(primaryForm.email.$error.pattern && primaryContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid email.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="phone">Phone</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (primaryForm.phone.$error.pattern && primaryContact.modified == true && submitcontact==true) || (primaryForm.phone.$error.minlength && primaryContact.modified == true && !primaryForm.phone.$error.pattern && submitcontact==true && !primaryForm.phone.$error.pattern)}">
+											<input ng-keyup='setModified(1)'  name="phone"
+												ng-pattern="/^[0-9]*$/" ng-model='primaryContact.cellPhone'
+												class="form-control elipsis" type="text"
+												ng-disabled="fieldDisabledContact"  
+												minlength=10 maxlength=16>
+											<p
+												ng-show="(primaryForm.phone.$error.pattern && primaryContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid phone.</p>
+											<p
+												ng-show="(primaryForm.phone.$error.minlength && primaryContact.modified == true && !primaryForm.phone.$error.pattern && submitcontact==true && !primaryForm.phone.$error.pattern)"
+												class="help-block">Phone number must have at least 10 digits.</p>
+										</div>
+									</div>
+
+								</form>
+							</div>
+
+							<div class="col-xs-6">
+								<form name="EscalationForm">
+									<div class="row col-xs-12">
+										<p class="contact">Escalation Contact</p>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Name</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (EscalationForm.name.$error.pattern && escalationContact.modified == true && submitcontact==true) || (EscalationForm.name.$error.required && escalationContact.modified == true && submitcontact==true)}">
+											<input ng-keyup='setModified(2)' name="name" ng-required="siteEscalationContactInfoExists || escalationContact.email || escalationContact.cellPhone" 
+												ng-pattern="/^[a-zA-Z\.\s]*$/" maxlength=100
+												ng-model='escalationContact.name' class="form-control elipsis"
+												type="text" ng-disabled="fieldDisabledContact">
+											<p
+												ng-show="(EscalationForm.name.$error.pattern && escalationContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid name.</p>
+											<p
+												ng-show="(EscalationForm.name.$error.required && escalationContact.modified == true && submitcontact==true)"
+												class="help-block">Name is required.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="email">Email</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' :(EscalationForm.email.$error.pattern && escalationContact.modified == true && submitcontact==true)}">
+											<input ng-blur='setModified(2,$event)' name="email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+												ng-model='escalationContact.email' class="form-control elipsis" maxlength=100
+												type="text" ng-disabled="fieldDisabledContact"
+												>
+											<p
+												ng-show="(EscalationForm.email.$error.pattern && escalationContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid email.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="phone">Phone</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (EscalationForm.phone.$error.pattern && escalationContact.modified == true && submitcontact==true) || (EscalationForm.phone.$error.minlength && escalationContact.modified == true && !EscalationForm.phone.$error.pattern && submitcontact==true && !EscalationForm.phone.$error.pattern) }">
+											<input ng-keyup='setModified(2)' name="phone"
+												ng-pattern="/^[0-9]*$/"
+												ng-model='escalationContact.cellPhone' class="form-control elipsis"
+												type="text" ng-disabled="fieldDisabledContact"  
+												disabled="disabled" minlength=10 maxlength=16>
+											<p
+												ng-show="EscalationForm.phone.$error.pattern && escalationContact.modified == true && submitcontact==true" 
+												class="help-block">Invalid phone.</p>
+											<p
+												ng-show="(EscalationForm.phone.$error.minlength && escalationContact.modified == true && !EscalationForm.phone.$error.pattern && submitcontact==true && !EscalationForm.phone.$error.pattern)"
+												class="help-block">Phone number must have at least 10 digits.</p>
+										</div>
+									</div>
+
+								</form>
+							</div>
+
+						</div>
+						<div class="row">
+
+							<div class="col-xs-6">
+								<form name="VendorForm">
+									<div class="row col-xs-12">
+										<p class="contact">Vendor Contact</p>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="name">Name</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (VendorForm.name.$error.pattern && vendorContact.modified == true && submitcontact==true) || (VendorForm.name.$error.required && vendorContact.modified == true && submitcontact==true)}">
+											<input ng-keyup='setModified(3)' name="name" ng-required="siteVendorContactInfoExists || vendorContact.email || vendorContact.cellPhone"
+												ng-pattern="/^[a-zA-Z\.\s]*$/" ng-model='vendorContact.name' maxlength=100
+												class="form-control elipsis" type="text"
+												ng-disabled="fieldDisabledContact">
+											<p
+												ng-show="(VendorForm.name.$error.pattern && vendorContact.modified == true && submitcontact==true) "
+												class="help-block">Invalid name.</p>
+											<p
+												ng-show="(VendorForm.name.$error.required && vendorContact.modified == true && submitcontact==true) "
+												class="help-block">Name is required.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="email">Email</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' :(VendorForm.email.$error.pattern && vendorContact.modified == true && submitcontact==true)}">
+											<input ng-keyup='setModified(3)' name="email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+												ng-model='vendorContact.email' class="form-control elipsis" maxlength=100
+												type="text" ng-disabled="fieldDisabledContact"  
+												disabled="disabled">
+											<p
+												ng-show="(VendorForm.email.$error.pattern && vendorContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid email.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="phone">Phone</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (VendorForm.phone.$error.pattern && vendorContact.modified == true && submitcontact==true) || (VendorForm.phone.$error.minlength && vendorContact.modified == true && submitcontact==true && !VendorForm.phone.$error.pattern)  }">
+											<input ng-keyup='setModified(3)' name="phone"
+												ng-pattern="/^[0-9]*$/" ng-model='vendorContact.cellPhone'
+												class="form-control elipsis" type="text"
+												ng-disabled="fieldDisabledContact" minlength=10
+												maxlength=16>
+											<p
+												ng-show="(VendorForm.phone.$error.pattern && vendorContact.modified == true && submitcontact==true)"
+												class="help-block">Invalid phone.</p>
+											<p
+												ng-show="(VendorForm.phone.$error.minlength && vendorContact.modified == true && submitcontact==true && !VendorForm.phone.$error.pattern)"
+												class="help-block">Phone number must have at least 10 digits.</p>
+										</div>
+									</div>
+
+								</form>
+							</div>
+
+							<div class="col-xs-6">
+								<form name="ImportantContactForm">
+									<div class="row col-xs-12">
+										<p class="contact">Other Important Contacts</p>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="fireBrigade">Fire Brigade</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (ImportantContactForm.fireBrigade.$error.pattern && submitcontact==true) || (ImportantContactForm.fireBrigade.$error.minlength && submitcontact==true && !ImportantContactForm.fireBrigade.$error.pattern)}">
+											<input ng-keyup='setModified(4)' name="fireBrigade"
+												ng-pattern="/(^([0-9]{3})|([0-9]{10,16})|([(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{5}$))$/"
+												ng-model='fireBrigadeContact.cellPhone' class="form-control elipsis"
+												type="text" ng-disabled="fieldDisabledContact" minlength=3
+												 maxlength=16>
+											<p
+												ng-show="ImportantContactForm.fireBrigade.$error.pattern && submitcontact==true"
+												class="help-block">Invalid fire brigade contact.</p>
+											<p
+												ng-show="ImportantContactForm.fireBrigade.$error.minlength && submitcontact==true && !ImportantContactForm.fireBrigade.$error.pattern"
+												class="help-block">Contact must have at least 10 digits.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="policeCr">Police</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (ImportantContactForm.policeCr.$error.pattern && submitcontact==true)  || (ImportantContactForm.policeCr.$error.minlength && submitcontact==true && !ImportantContactForm.policeCr.$error.pattern) }">
+											<input ng-keyup='setModified(5)' name="policeCr"
+												ng-pattern="/(^([0-9]{3})|([0-9]{10,16})|([(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{5}$))$/" ng-model='policeCRContact.cellPhone'
+												class="form-control elipsis" type="text"
+												ng-disabled="fieldDisabledContact" minlength=3
+												maxlength=16>
+											<p
+												ng-show=" ImportantContactForm.policeCr.$error.pattern && submitcontact==true "
+												class="help-block">Invalid police contact.</p>
+											<p
+												ng-show="ImportantContactForm.policeCr.$error.minlength && submitcontact==true && !ImportantContactForm.policeCr.$error.pattern"
+												class="help-block">Contact must have at least 10 digits.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="ambulance">Ambulance</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (ImportantContactForm.ambulance.$error.pattern && submitcontact==true)  || (ImportantContactForm.ambulance.$error.minlength && submitcontact==true && !ImportantContactForm.ambulance.$error.pattern) }">
+											<input ng-keyup='setModified(6)' name="ambulance"
+												ng-pattern="/(^([0-9]{3})|([0-9]{10,16})|([(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{5}$))$/"
+												ng-model='ambulanceContact.cellPhone' class="form-control elipsis"
+												type="text" ng-disabled="fieldDisabledContact"
+												minlength=3 maxlength=16>
+											<p
+												ng-show="ImportantContactForm.ambulance.$error.pattern && submitcontact==true"
+												class="help-block">Invalid ambulance contact.</p>
+											<p
+												ng-show="ImportantContactForm.ambulance.$error.minlength && submitcontact==true && !ImportantContactForm.ambulance.$error.pattern"
+												class="help-block">Contact must have at least 10 digits.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="hospital">Hospital</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (ImportantContactForm.hospital.$error.pattern && submitcontact==true) || (ImportantContactForm.hospital.$error.minlength && submitcontact==true && !ImportantContactForm.hospital.$error.pattern) }">
+											<input ng-keyup='setModified(7)' name="hospital"
+												ng-pattern="/(^([0-9]{3})|([0-9]{10,16})|([(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{5}$))$/" ng-model='hospitalContact.cellPhone'
+												class="form-control elipsis" type="text"
+												ng-disabled="fieldDisabledContact" minlength=3
+												maxlength=16>
+											<p
+												ng-show="ImportantContactForm.hospital.$error.pattern && submitcontact==true"
+												class="help-block">Invalid hospital contact.</p>
+											<p
+												ng-show="ImportantContactForm.hospital.$error.minlength && submitcontact==true && !ImportantContactForm.hospital.$error.pattern"
+												class="help-block">Contact must have at least 10 digits.</p>
+										</div>
+									</div>
+								</form>
+							</div>
+
+						</div>
+					</form>
+				</div>
+			</div>
+
+
+		</div>
+		<div collapse="!iscollapsedContacts">
+			<button type="button" class="customerBtn btn btn-default"
+				ng-click="enableFormfileldsContacts()"
+				ng-hide="editDisabledContacts">Edit</button>
+			<button class="btn btn-default editBtn" ng-hide="fieldDisabledContact"
+				ng-click="saveContacts($event)">Save</button>
+			<button class="btn btn-default editBtn margin_left_1perc"
+				ng-click="cancelContactsInfo()" ng-hide="fieldDisabledContact">Cancel
+			</button>
+		</div>
+	</div>
+
+
+	<div class="CollapseDiv">
+
+		<form name="BOQ" ng-init="BOQSubmitted=false;" novalidate>
+			<div class="CollapseDiv ">
+				<div class="subheaderDiv">
+				<h5 class="subheaderCustomer">
+				<a class="linkCursor" ng-click="collapsedBoqInfo()"><i id="up"
+					ng-show="iscollapsedBoqInfo" class="glyphicon glyphicon-chevron-up"></i><i
+					class="glyphicon glyphicon-chevron-down" id="down"
+					ng-show="!iscollapsedBoqInfo"></i>BOQ</a>
+				</h5>
+
+
+					<div class="details">
+						<div collapse="!iscollapsedBoqInfo">
+
+							<div class="row">
+
+								<div class="col-xs-6">
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="total">Total</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : (BOQ.total.$invalid && BOQSubmitted==true) || nameError}">
+											<input name="total" ng-model='siteBoq.total'
+												class="form-control" type="text"
+												ng-value={{parseInt(siteBoq.gateway)+parseInt(siteBoq.repeater)+parseInt(siteBoq.FE)+parseInt(siteBoq.FH)+parseInt(siteBoq.FAS)}}
+												ng-disabled="true">
+											<p ng-show="(BOQ.total.$invalid && BOQSubmitted==true)"
+												class="help-block">Invalid total.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="gateway">Gateways</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : BOQ.gateway.$error.pattern && BOQSubmitted==true }">
+											<input id="boqGateway" name='gateway' ng-model='siteBoq.gateway'
+												class="form-control" ng-change="ChangeTotal()" type="text"
+												ng-disabled="fieldBoqDisabled" ng-pattern="/^[0-9]*$/">
+											<p ng-show="BOQ.gateway.$error.pattern && BOQSubmitted==true"
+												class="help-block">Invalid gateways.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="repeater">Repeaters</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : BOQ.repeater.$error.pattern && BOQSubmitted==true }">
+											<input name='repeater' ng-model='siteBoq.repeater'
+												ng-change="ChangeTotal()" ng-pattern="/^[0-9]*$/"
+												class="form-control" type="text"
+												ng-disabled="fieldBoqDisabled">
+											<p ng-show="BOQ.repeater.$error.pattern && BOQSubmitted==true"
+												class="help-block">Invalid repeaters.</p>
+										</div>
+									</div>
+
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="FE">Fire Extinguishers</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' :BOQ.FE.$error.pattern && BOQSubmitted==true }">
+											<input name='FE' ng-model='siteBoq.FE'
+												ng-pattern="/^[0-9]*$/" class="form-control" type="text"
+												ng-disabled="fieldBoqDisabled" ng-change="ChangeTotal()">
+											<p ng-show="BOQ.FE.$error.pattern && BOQSubmitted==true"
+												class="help-block">Invalid fire extinguishers.</p>
+										</div>
+									</div>
+
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="FH">Hydrant and Sprinkler Systems</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : BOQ.FH.$error.pattern && BOQSubmitted==true }">
+											<input type="text" class="form-control"
+												ng-pattern="/^[0-9]*$/" name="FH"
+												ng-disabled="fieldBoqDisabled" ng-model="siteBoq.FH"
+												ng-change="ChangeTotal()">
+											<p ng-show="(BOQ.FH.$error.pattern && BOQSubmitted==true)"
+												class="help-block">Invalid Hydrant and Sprinkler Systems.</p>
+										</div>
+									</div>
+
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="FAS">Fire Alarm Systems</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : BOQ.FAS.$error.pattern && BOQSubmitted==true }">
+											<input type="text" class="form-control" name="FAS"
+												ng-pattern="/^[0-9]*$/" ng-disabled="fieldBoqDisabled"
+												ng-model="siteBoq.FAS" ng-change="ChangeTotal()">
+											<p ng-show=" BOQ.FAS.$error.pattern && BOQSubmitted==true"
+												class="help-block">Invalid fire alarm systems.</p>
+										</div>
+									</div>
+
+								</div>
+
+								<div class="col-xs-6">
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="auditor">Auditor</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : BOQ.auditor.$invalid && BOQSubmitted==true }">
+											<input type="text" class="form-control" name="auditor"
+												ng-model="siteBoq.auditor" ng-disabled="true">
+											<p ng-show=" BOQ.auditor.$invalid && BOQSubmitted==true"
+												class="help-block">Invalid auditor.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+										<div class="col-xs-4">
+											<label for="auditor">Audit Date</label>
+										</div>
+										<div class="col-xs-7"
+											ng-class="{ 'has-error' : BOQ.auditDate.$invalid && BOQSubmitted==true }">
+											<input type="text" class="form-control" name="auditDate" uib-datepicker-popup="dd/MM/yyyy"
+												ng-model="siteBoq.auditDate" ng-disabled="true">
+											<p ng-show=" BOQ.auditDate.$invalid && BOQSubmitted==true"
+												class="help-block">Invalid audit date.</p>
+										</div>
+									</div>
+									<div class="row form-group">
+
+										<div class="col-xs-4">
+											<label for="auditReport">Audit Report</label>
+										</div>
+
+										<div class="col-xs-7" 
+											ng-class="{ 'has-error' : BOQ.auditReport.$invalid && BOQSubmitted==true }">
+											<a  class="handicon" csv-header="csvHeaders1" ng-csv="csvSiteAudit" filename="SiteAudit.csv">Download</a>
+											<p
+												ng-show="BOQ.auditReport.$invalid && BOQSubmitted==true"
+												class="help-block">Invalid auditor report.</p>
+										</div>
+
+									</div>
+
+
+								</div>
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<div collapse="!iscollapsedBoqInfo">
+					<button class="btn btn-default editBtn" ng-disabled="!showBoq"  ng-attr-title="{{ (!showBoq)? 'BOQ data not available for updation' : ''}}"
+						ng-click="enableBoqFormfilelds()" ng-hide="editBoqDisable">Edit</button>
+					<button class="btn btn-default editBtn" ng-hide="saveBoqDisabled"
+						ng-click="saveBoqInfo($event)">Save</button>
+					<button class="btn btn-default editBtn margin_left_1perc"
+						ng-click="cancelBoqInfo()" ng-hide="saveBoqDisabled">Cancel
+					</button>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	
+	<!--*********************************************************************************** PRAGATI END *************************************8-->
+	
+<!-- ************************************************** SITE INVENTORY - Author - Karan -->
+
+	<div class="CollapseDiv ">
+
+		<form name="siteInventory">
+			<div class="CollapseDiv">
+				<div class="subheaderDiv" ng-init="getSiteInventories()">
+							<div class="row padding-right-5-3-perc">
+								<div class="col-xs-5">
+								<h5 class="subheaderCustomer margin-top-5-perc">
+								<a class="linkCursor" ng-click="collapsedSiteInventory()"><i
+									id="up" ng-show="iscollapsedSiteInventory"
+									class="glyphicon glyphicon-chevron-up"></i><i
+									class="glyphicon glyphicon-chevron-down" id="down"
+									ng-show="!iscollapsedSiteInventory"></i>Site Inventory</a>
+								</h5>
+								
+								</div>
+								
+						<div ng-show="iscollapsedSiteInventory">
+							<div class="col-xs-1 remove_right_padding pull-right margin-top-1-5-perc">
+								<div class="btn-group width_100perc" uib-dropdown uib-keyboard-nav
+									is-open="status3.isopen">
+									<button id="records-button" type="button"
+										class="btn btn-default form-control" uib-dropdown-toggle
+										ng-disabled="disabled">
+										<div class="row">
+											<div class="col-xs-6"><span>{{pageCount}}</span></div>
+											<div class="col-xs-1"><span
+											class="caret"></span></div>
+										</div>
+										 &nbsp;&nbsp;&nbsp;&nbsp;
+									</button>
+									<ul uib-dropdown-menu role="menu" class="min_width_60perc"
+										aria-labelledby="records-button">
+										<li ng-click="pageCount=10;getSiteInventories();" role="menuitem"><a href="">10</a></li>
+										<li ng-click="pageCount=20;getSiteInventories();" role="menuitem"><a href="">20</a></li>
+										<li ng-click="pageCount=50;getSiteInventories();" role="menuitem"><a href="">50</a></li>
+										<li ng-click="pageCount=100;getSiteInventories();" role="menuitem"><a href="">100</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="col-xs-2 pull-right remove_right_padding margin-top-1-5-perc">
+										<div class="width_100perc" uib-dropdown uib-keyboard-nav
+											is-open="status2.isopen">
+											<input class="col-xs-12" placeholder="Search" type=text ng-model="keyword" ng-change="getSiteInventories()">
+									</div>
+							</div>
+						</div>
+															
+							</div>
+					<div class="details">
+						<div collapse="!iscollapsedSiteInventory">
+							<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<th ng-click="sort('Name')" class="firstTh">Device Name<span
+										class="glyphicon sort-icon" ng-show="sortKey=='Name'"
+										ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+									<th>Description</th>
+									<th>Device Type</th>
+									<th>State</th>
+									<th>Unique SN</th>
+									<th>Location</th>
+									<th>Device Position Remarks</th>
+									<th>Battery Date</th>
+									<th>Brand</th>
+<!-- 									<th class="actions_column">Actions</th> -->
+								</thead>
+								<tbody>
+									<tr
+										dir-paginate="inventory in siteInventories | itemsPerPage: pageCount"
+										total-items="totalSiteInventories" pagination-id="siteInventory"
+										current-page="pagination.current">
+										<td>{{inventory.name!=null?inventory.name:'-'}}</td>
+										<td>{{inventory.description!=null?inventory.description:'-'}}</td>
+										<td>{{getDeviceTypeById(inventory.deviceTypeId)}}</td>
+										<td>{{inventory.siteLocationDeviceStatusName}}</td>
+										<td>{{inventory.serialNumber!=null?inventory.serialNumber:'-'}}</td>
+										<td>{{inventory.locationName}}</td>
+										<td>{{inventory.locationRemarks!=null?inventory.locationRemarks:'-'}}</td>
+										<td>{{inventory.batteryDate!=null?inventory.batteryDate:'-' | date:'dd/MM/yyyy'}}</td>
+										<td>{{inventory.brand!=null?inventory.brand:'-'}}</td>
+<!-- 										<td> -->
+<!-- 													<button ng-disabled="siteInventorybtndisabled" -->
+<!-- 														ng-click="open('md','editInventory.html',inventory,getSiteInventories,$event);" -->
+<!-- 														class="btn btn-default margin_left_2perc"> -->
+<!-- 														<span class="glyphicon glyphicon-edit"></span>Edit -->
+<!-- 													</button> -->
+<!-- 													<button ng-disabled="siteInventorybtndisabled" -->
+<!-- 														ng-click="open('md','deleteSiteInventory.html',inventory,siteDeleteCallback, $event);" -->
+<!-- 														class="btn btn-default margin_left_2perc"> -->
+<!-- 														<span class="glyphicon glyphicon-trash"></span>Delete -->
+<!-- 													</button> -->
+<!-- 										</td> -->
+
+									</tr>
+									<tr ng-show="!siteInventories.length">
+										<td colspan="9" class="text-center">No Records Found</td>
+									</tr>
+								</tbody>
+							</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div collapse="!iscollapsedSiteInventory">
+				<button  type="button" csv-header="csvHeaders" ng-csv="csvSiteInventories" filename="site_inventories.csv" class="btn btn-default">Export to CSV</button>
+				<dir-pagination-controls 
+						pagination-id="siteInventory"	on-page-change="getInventories(newPageNumber)"	template-url="/core/resources/js/Common/templates/dirPagination.html"></dir-pagination-controls>
+				<br> <br>
+			</div>
+			</form>
+	</div>
+
+
+
+
+
+
+	<form name="LocationsInfo">
+		<div class="CollapseDiv ">
+
+			<div class="row">
+				<div class="col-xs-6">
+					<h5 class="col-xs-6 margin-top">
+					<div class="title">
+						Locations ({{locations.length}})
+					</div></h5>
+				</div>
+				<div class="col-xs-6 margin_bottom_2_percent">
+					<button type="button" class="btn btn-default pull-right"
+						ng-click="open('md','addNewLocation.html',site,addNewLocationCallback,$event)"
+						ng-hide="addNewLocationDisabled">Add New Location</button>
+				</div>
+			</div>
+	<!-- ng repeat with collapse if needed
+
+				<div ng-repeat="location in locations"
+					collapse="iscollapsedLocations">
+					<div class="row form-group">
+						
+
+							<h5 class="subheaderCustomer">
+								<a ng-click="toggleLocation(location)"><i id="up"
+									ng-show="location.isCollapsed"
+									class="glyphicon glyphicon-menu-up"></i><i
+									class="glyphicon glyphicon-menu-down" id="down"
+									ng-show="!location.isCollapsed"></i></a>{{location.locationName}}
+
+							</h5>
+							<div class="details">
+								<div collapse="false">
+									<div class="row form-group">
+										
+									</div>
+								</div>
+
+							</div>
+						
+					</div>
+				</div>
+
+
+				 -->
+			<!-- ng repeat -->
+			<div ng-repeat="location in locations">
+				<div ng-init="setLocationScope(location,this)"
+					class="col-xs-12 no-padding subheaderDiv">
+
+					<div
+						class="col-xs-12 no-padding">
+						<h5 class="subheaderCustomer">
+							<a class="linkCursor" ng-click="toggleLocation(location,this)"><i id="up"
+								ng-show="!location.isCollapsed"
+								class="glyphicon glyphicon-chevron-up"></i><i
+								class="glyphicon glyphicon-chevron-down" id="down"
+								ng-show="location.isCollapsed"></i>{{location.locationName}}</a>
+
+						</h5>
+					</div>
+
+					<div class="details" collapse="location.isCollapsed">
+
+						<div class="row">
+							<h5 class="locationSubheader no-margin-top">Floor Plan</h5>
+						</div>
+
+
+						<div ng-if="location.mapImage != null"
+							class="row margin_bottom_2_percent">
+							
+							<div class="col-xs-12 no-padding margin_top_2_percent" style="text-align:center;height: 300px; position: relative;overflow: auto">
+								<div name="floorMap" style="margin : 0 auto;position : relative;display:inline-block">
+									<img galleryimg="no" align="center" id="{{'floorMap'+location.id}}" ondragstart="return false;" style="top: 0%; left: 0%" class="no-padding floormap noselect" src={{location.mapImage}}>
+
+									<!-- 										<span name={{device.id}} -->
+									<!-- 										ng-repeat="device in devicesList" -->
+									<!-- 										class="col-xs-1 cursor_pointer device{{device.deviceStatus}}" -->
+									<!-- 										style="position: absolute; float: left; top: 0px; left: 0px;" -->
+									<!-- 										draggable>{{device.id}}</span> -->
+
+									<span ng-repeat="device in devicesList"
+									title="
+• Device Name: {{device.name!=null?device.name:'-'}}
+• Device Status: {{getDeviceStatus(device.deviceStatus)}}
+											"
+										class="cursor_pointer type{{device.deviceTypeId}} device{{device.deviceStatus}}"
+										my-draggable ng-load="setXY(device)" onmove=onDevicesMoved
+										scope=this></span>
+								</div>
+							</div>
+						</div>
+
+						<div ng-if="location.mapImage == null"
+							class="row margin_bottom_2_percent">
+							<div class="col-xs-12 no-padding margin_top_2_percent">
+								<div  name="floorMap"
+									style="height: 300px; position: relative; text-align: center; border: 1px solid #b4c3d7;">
+									<img galleryimg="no"
+										 id='nofloormap' style="user-select: none;-webkit-user-select: none;position: absolute; top: 0%; left: 0%;"
+										class="no-padding floormap noselect" height="300" width="1104.56"
+										></img>
+									<img galleryimg="no"
+										style="position: absolute; top: 30%; left: 47%;"
+										class="no-padding floormap noselect" height="71" width="71"
+										src="core/resources/images/no_floormap.png"></img>
+									<div
+										style="position: absolute; top: 61%; left: 42%; font-family: OpenSans; font-size: 18px; color: #b4c3d7; text-align: left;">
+										No Floor Plan Available</div>
+
+
+									<span ng-hide="location.mapImage==null" ng-repeat="device in devicesList" 
+									title="
+• Device Name: {{device.name!=null?device.name:'-'}}
+• Device Status: {{getDeviceStatus(device.deviceStatus)}}
+  											"
+ 
+									
+										class="cursor_pointer type{{device.deviceTypeId}} device{{device.deviceStatus}}"
+										my-draggable ng-load="setXY(device)" onmove=onDevicesMoved
+										scope=this></span>
+								</div>
+							</div>
+						</div>
+
+						<div ng-show="location.mapImage != null">
+							<div id="{{'edit'+location.id}}" class="row collapse in">
+								<button type="button" class="customerBtn btn btn-default"
+									ng-click="makeDevicesPositionEditable(this,location)" ng-disabled="!devicesList.length" ng-hide="editDeviceDisabled">Edit</button>
+							</div>
+	
+							<div id="{{'l'+location.id}}" class="row collapse">
+							
+								<!--  ng-disabled="!saveDisabled" -->
+								<button type="button" class="customerBtn btn btn-default"
+									ng-click="updateDevices(this,location)">Save</button>
+	
+								<button style="margin-left: 20px;" type="button"
+									class="customerBtn btn btn-default"
+									ng-click="cancelDevicePositioning(location,this)">Cancel</button>
+							</div>
+						</div>
+
+
+						<div class="row"
+							ng-init="isInventoryExpanded = {id : location.id,expanded : false}">
+							<h5
+								class="no-margin-top locationSubheader no-margin-left margin_bottom_2_percent">
+								<span
+									ng-click="isInventoryExpanded.expanded = isInventoryExpanded.expanded == true? false : true"
+									class="glyphicon glyphicon-minus" ng-if="isInventoryExpanded.expanded"></span>
+								<span class="glyphicon glyphicon-plus"
+									ng-click="isInventoryExpanded.expanded = isInventoryExpanded.expanded == true? false : true"
+									ng-if="!isInventoryExpanded.expanded"></span> <a class="btn-link cursor_pointer" ng-click="isInventoryExpanded.expanded = isInventoryExpanded.expanded == true? false : true">{{location.locationName}} Inventory</a>
+							</h5>
+							<br> <br>
+							<!-- !isInventoryExpanded.expanded -->
+							<div class="row" collapse="!isInventoryExpanded.expanded">
+								<div style="overflow-x: auto;" class="col-xs-12">
+								<div class="table-responsive">
+										<table class="table table-striped">
+											<thead>
+												<th>Device Name</th>
+												<th>Description</th>
+												<th>Device Type</th>
+												<th>Gateway</th>
+												<th>State</th>
+												<th>Unique SN</th>
+												<th>Device Position Remarks</th>
+												<th>Battery Date</th>
+												<th>Brand</th>
+												<th class="actions_column" ng-hide="locationInventorybtndisabled">Actions</th>
+											</thead>
+	
+											<tbody>
+												<tr
+											dir-paginate="device in paginationDevicesList | itemsPerPage: 10"
+											total-items="paginationTotalDevices" pagination-id="location.id"
+											current-page="pagination2.current">
+												
+													<td>{{device.name!=null?device.name:'-'}}</td>
+													<td>{{device.description!=null?device.description:'-'}}</td>
+													<td>{{getDeviceTypeById(device.deviceTypeId)}}</td>
+													<td>{{getGatewayName(device,this)}}</td>
+													<td>{{device.siteLocationDeviceStatusName}}</td>
+													<td>{{device.serialNumber!=null?device.serialNumber:'-'}}</td>
+													<td>{{device.locationRemarks!=null?device.locationRemarks:'-'}}</td>
+													<td>{{device.batteryDate!=null?device.batteryDate:'-' | date:'dd/MM/yyyy'}}</td>
+													<td>{{device.brand!=null?device.brand:'-'}}</td>
+													<td ng-hide="locationInventorybtndisabled">
+														<button ng-if="device.inventoryId == undefined" ng-disabled="locationInventorybtndisabled"
+															ng-click="open('md','editLocationDevice.html',{device : device,location : location,scope : this},editLocationDeviceCallback,$event);"
+															class="btn btn-default margin_left_2perc">
+															<span class="glyphicon glyphicon-edit"></span>Edit
+														</button>
+														<button ng-if="device.inventoryId != undefined" ng-disabled="locationInventorybtndisabled"
+															ng-click="open('md','editInventory.html',{device : device,location : location,scope : this},editSiteInventoryCallback,$event);"
+															class="btn btn-default margin_left_2perc">
+															<span class="glyphicon glyphicon-edit"></span>Edit
+														</button>
+														<button ng-disabled="locationInventorybtndisabled"
+															ng-click="open('md','deleteLocationDevice.html',{device : device,scope : this},{pagination : getPaginationDevices,getDevices : getDevices},$event);"
+															class="btn btn-default">
+															<span class="glyphicon glyphicon-trash"></span>Delete
+														</button>
+<!-- 														<button ng-if="device.editted"
+															ng-click="reloadDeviceConfig"
+															class="btn btn-default">
+															<span class="glyphicon glyphicon-trash"></span>Reload
+														</button> -->
+													</td>
+	
+												</tr>
+												<tr ng-show="!paginationDevicesList.length">
+													<td colspan="10" class="text-center">No Records Found</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<button type="button" class="customerBtn btn btn-default" ng-hide="addNewIemDisabled"
+										ng-click="open('md','addDevice.html',{site : site,location : location,scope : this},addDeviceCallback,$event);">Add
+										New Item</button>
+									<dir-pagination-controls 
+						pagination-id="location.id"	on-page-change="getPaginationDevices(location.id,'',pagination2.current,10,this)"	template-url="/core/resources/js/Common/templates/dirPagination.html"></dir-pagination-controls>
+								</div>
+
+
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<div collapse="location.isCollapsed">
+					<button type="button" class="customerBtn btn btn-default" ng-hide="EditLocationDisabled"
+						ng-click="open('md','editLocation.html',{location :location,devices : devicesList,openfunction : open,scope : this},editLocationCallback,$event);">Edit
+						this Location</button>
+					<button type="button" class="customerBtn btn btn-default" ng-hide="EditLocationDisabled"
+						ng-click="open('md','deleteLocation.html',{location :location,devices : devicesList,openfunction : open,scope : this},editLocationCallback,$event);">Delete this Location</button>
+				</div>
+
+
+			</div>
+
+
+
+		</div>
+		<!-- ng repeat -->
+		<div ng-if="locations.length <= 0"></div>
+	</form>
+	<!-- LOCATION END - Author karan -->
+
+
+</div>
+
+
+<script type="text/ng-template" id="addNewLocation.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Add New Location - {{site.name}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+	</div>
+	<div class="modal-body">
+		<form  name="addNewLocation" ng-keypress="enterKeyEvent($event,'ADD_LOCATION')" ng-init="submitted=false;" novalidate>
+		<div class="row form-group">
+			<label class="col-xs-3">Location Name*:</label>
+			<div class="col-xs-9"  ng-class="{ 'has-error' : addNewLocation.locationName.$error.required && submitted==true }">
+				<input type="text" maxlength=100 name="locationName" class="form-control elipsis" ng-model="locationName" required autofocus>
+				<p ng-show="addNewLocation.locationName.$error.required && submitted==true"  class="help-block">Location name is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3" for="floorFile">Floor Plan:</label>
+			<div class="col-xs-9" ng-class="{ 'col-xs-8' : isFloorFileUploading, 'has-error' : isFloorFileFailed,'has-success':floorFileUploaded}">
+				<input name="floorFile" nv-file-select
+					uploader="floorFileUploader"
+						ng-model='floorFile' class="form-control"
+						type="file" filters="fileuploadfilter">
+				<p ng-if="isFloorFileFailed" class="help-block">Upload failed! Please upload an image file with size less than 5MB.</p>
+				<p ng-if="!isFloorFileFailed && !floorFileUploaded" class="help-block">Please upload an image file with size less than 5MB.</p>
+				<p ng-if="floorFileUploaded" class="help-block">Floor Plan file uploaded.</p>
+
+			</div>
+
+			<div ng-if="isFloorFileUploading"
+				class="col-xs-1 spinr-container">
+				<div class="spinr"></div>
+			</div>
+		</div>
+
+		<!--
+		<div class="row form-group">
+			
+			<label class="col-xs-3">Other Properties:</label>
+			
+			<div class="col-xs-9">
+				<input type="text" name="lastName" class="form-control" ng-model="lastName">
+			</div>		
+		</div>
+		-->
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('ADD_LOCATION')">Add</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="editLocation.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Edit Location - {{location.locationName}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+	</div>
+	<div class="modal-body">
+		<form  name="editLocation" ng-keypress="enterKeyEvent($event,'EDIT_LOCATION')" ng-init="submitted=false;" novalidate>
+		<div class="row form-group">
+			<label class="col-xs-3">Location Name*:</label>
+			<div class="col-xs-9"  ng-class="{ 'has-error' : editLocation.locationName.$error.required && submitted==true }">
+				<input type="text" maxlength=100 name="locationName" class="form-control elipsis" ng-model="locationName" required autofocus>
+				<p ng-show="editLocation.locationName.$error.required && submitted==true "  class="help-block">Location name is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3" for="floorFile">Floor Plan:</label>
+			<div ng-if="uploadMap || mapImage==null" class="col-xs-9" ng-class="{ 'col-xs-8' : isFloorFileUploading, 'has-error' : (isFloorFileFailed && !uploaded),'has-success':floorFileEditUploaded || uploaded}">
+				
+
+				<div  ng-class="{ 'input-group' :  !uploaded && mapImage != null}">
+					<input ng-disabled="!allDevicesResetable" id="floorFile" name="floorFile" nv-file-select
+					uploader="floorFileUploader"
+						ng-model='mapImage' class="form-control"
+						type="file" filters="fileuploadfilter">
+					<span ng-if="!uploaded && mapImage!= null" ng-click="allowLocationUpload(false)" style="font-size: 14px" class="input-group-addon search_btn cancel_fileupload  glyphicon glyphicon-remove position_static"></span>
+				</div>
+
+				<p ng-if="isFloorFileFailed" class="help-block">Upload failed! Please upload an image file with size less than 5MB.</p>
+				<p ng-if="!isFloorFileFailed && !floorFileEditUploaded && allDevicesResetable" class="help-block">Please upload an image or PDF file with size less than 5MB.</p>
+				<p ng-if="uploaded" class="help-block">Floor Plan file uploaded.</p>
+				<p ng-if="!allDevicesResetable" class="help-block">Cannot change the floor map when devices are allocated.</p>
+			</div>
+			<div ng-if="isFloorFileUploading &&(uploadMap || mapImage==null)"
+				class="col-xs-1 spinr-container">
+				<div class="spinr"></div>
+			</div>
+									
+			<div ng-if="mapImage!=null && !uploadMap" class="col-xs-9">
+				<div ng-init="setTrimmedMapImage(mapImage)" ng-class="{ 'col-xs-12' :  siteInfofieldDisabled}" class="input-group">
+					<input ng-model="trimmedMapImage" ng-disabled="siteInfofieldDisabled" type="text" ng-model="customer.firedetectionFile" class="form-control" id="inputGroupSuccess3" readonly="readonly" aria-describedby="inputGroupSuccess3Status">
+					<span ng-if="!siteInfofieldDisabled" ng-click="allowLocationUpload(true)" class="input-group-addon search_btn glyphicon glyphicon-pencil position_static" title="Edit Choosen File"></span>
+				</div>
+			</div>
+
+			
+		</div>
+
+		<!--
+		<div class="row form-group">
+			
+			<label class="col-xs-3">Other Properties:</label>
+			
+			<div class="col-xs-9" ng-class="{ 'has-error' : addNewUser.lastName.$invalid && !addNewUser.lastName.$pristine }">
+				<input type="text" name="lastName" class="form-control" ng-model="lastName">
+			</div>		
+		</div>
+		-->
+
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button"  ng-click="ok('EDIT_LOCATION')">Save</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="addDevice.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Add New Item - {{site.name}} </span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+	</div>
+	<div class="modal-body">
+		<form  name="addDevice" ng-keypress="enterKeyEvent($event,'ADD_DEVICE')" ng-init="submitted=false;" ng-autocomplete="off">
+		<div class="row form-group">
+				<label class="col-xs-3">Device Name*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (addDevice.name.$error.pattern && submitted==true) || (addDevice.name.$error.required && submitted==true) }">
+					<input type="text" maxlength=100 name="name" ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/" class="form-control elipsis" ng-model="deviceName" required autofocus>
+					<p ng-show="(addDevice.name.$error.pattern && submitted==true)"  class="help-block">Invalid device name.</p>
+					<p ng-show="(addDevice.name.$error.required && submitted==true)"  class="help-block">Device name is required.</p>
+				</div>
+		</div>
+		<div class="row form-group">
+			<label class="col-xs-3">Type of Device:</label>
+			<div ng-init="getDeviceTypes()" class="col-xs-9">
+				<div uib-dropdown uib-keyboard-nav is-open="status2.isopen">
+					<button id="records-button" type="button"
+						class="form-control" uib-dropdown-toggle
+						ng-disabled="disabled" autofocus>
+						<span class="pull-left">{{currentDeviceType.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+						<li ng-repeat="deviceType in deviceTypes"><a href="" ng-click="changeDeviceType(deviceType)">{{deviceType.name}}</a></li>
+					</ul>
+				</div>
+
+			</div>
+		</div>
+
+		<div ng-show="currentDeviceType.category==1" class="row form-group">
+			<label class="col-xs-3">Connection Preferences:</label>
+			<div class="col-xs-9">
+						<div class="col-xs-6">
+							<label class="radio-inline"><input ng-click="passwordValidation=8" ng-change="submitted = false" type="radio" name="connection" value="W" ng-model="connection">WIFI</label>
+						</div>
+					
+						<div class="col-xs-6">
+							<label class="radio-inline"><input ng-click="passwordValidation=0" ng-change="submitted = false" type="radio" name="connection" value="G" ng-model="connection">SIM</label>
+						</div>
+			</div>
+			
+		</div>
+
+		<div ng-show="currentDeviceType.category==1 && connection=='G'" class="row form-group">
+			<label class="col-xs-3">APN*</label>
+			<div class="col-xs-9"  ng-class="{ 'has-error' : addDevice.apn.$error.required && submitted==true && connection=='G'}">
+				<input type="text" maxlength=100 name="apn" class="form-control elipsis" ng-model="apn"   ng-required="currentDeviceType.category==1  && connection=='G'" autofocus>
+				<p ng-show="addDevice.apn.$error.required && submitted==true && connection=='G'"  class="help-block">APN is required.</p>
+			</div>
+		</div>
+
+		<div ng-show="currentDeviceType.category==1 && connection=='W'">
+
+			<div class="row form-group">
+			<label class="col-xs-3">SSN*</label>
+			<div class="col-xs-9"  ng-class="{ 'has-error' : addDevice.ssn.$error.required && submitted==true && connection=='W'}">
+				<input type="text" maxlength=100 name="ssn" class="form-control elipsis" ng-model="ssn" ng-required="currentDeviceType.category==1 && connection=='W'" >
+				<p ng-show="addDevice.ssn.$error.required && submitted==true  && connection=='W'"  class="help-block">SSN is required.</p>
+			</div>
+			</div>
+			<input type="text" hidden>
+
+			<div  class="row form-group">
+				<label class="col-xs-3">Password*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (addDevice.ssnpassword.$error.pattern && submitted==true && connection=='W') || (addDevice.ssnpassword.$error.minlength && submitted==true && !addDevice.ssnpassword.$error.pattern && connection=='W') ||  (addDevice.ssnpassword.$error.required && submitted==true && connection=='W') }">
+					<!-- For autofill disable --><input type="password" style="" hidden>
+					<input type="password" ng-minlength="passwordValidation" maxlength="16" ng-pattern="/^\S*$/" name="ssnpassword" class="form-control" ng-model="ssnpassword"   ng-required="currentDeviceType.category==1  && connection=='W'">
+					<p ng-show=" (addDevice.ssnpassword.$error.pattern && submitted==true && connection=='W')"  class="help-block">Invalid password.</p>
+					<p ng-show=" (addDevice.ssnpassword.$error.minlength && submitted==true && !addDevice.ssnpassword.$error.pattern && connection=='W') "  class="help-block">Password must have at least 8 characters.</p>
+					<p ng-show=" (addDevice.ssnpassword.$error.required && submitted==true) "  class="help-block">Password is required.</p>
+				</div>
+			</div>
+
+
+		</div>
+
+		<div ng-show="currentDeviceType.category!=1" class="row form-group">
+			<label class="col-xs-3">Gateway</label>
+			<div ng-init="getGateways()" class="col-xs-9 form-group">
+				<div uib-dropdown uib-keyboard-nav is-open="status1.isopen">
+					<button ng-class="{'has-error' : gateways.length <= 0}" id="records-button" type="button"
+						class="form-control" uib-dropdown-toggle
+						ng-disabled="!gateways.length">
+						<span class="pull-left">{{currentGateway.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+						<li ng-repeat="gateway in gateways"><a href="" ng-click="changeGateway(gateway)">{{gateway.name}}</a></li>
+					</ul>
+					<p class="haserror" ng-show="gateways.length <= 0  && submitted==true">No gateways found.There should be at least one gateway. </p>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="row form-group">
+			
+			<label class="col-xs-3">Device Position Remarks<span ng-show="location.mapImage==null">*</span><span ng-show="location.mapImage!=null">:</span></label>
+			
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addDevice.locationRemarks.$error.required && submitted==true && location.mapImage==null) }">
+				<input type="text" name="locationRemarks" class="form-control" ng-required="location.mapImage == null" ng-model="locationRemarks">
+				<p ng-show=" (addDevice.locationRemarks.$error.required && location.mapImage==null && submitted==true) "  class="help-block">Device Position Remarks is required if no floor plan is available.</p>
+			</div>		
+		</div>
+
+		<!--
+		<div class="row form-group">
+			
+			<label class="col-xs-3">Other Properties:</label>
+			
+			<div class="col-xs-9">
+				<input type="text" name="lastName" class="form-control" ng-model="lastName">
+			</div>		
+		</div>
+		-->
+
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button"  ng-click="submitted=true;ok('ADD_DEVICE')">Save</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="editLocationDevice.html">
+
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Edit - {{titlename}} </span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+	</div>
+	<div class="modal-body">
+		<form  name="editLocationDevice" ng-keypress="enterKeyEvent($event,'EDIT_LOCATION_DEVICE')" ng-init="submitted=false;" autocomplete="off">
+		<div class="row form-group">
+				<label class="col-xs-3">Device Name*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editLocationDevice.name.$error.pattern && submitted==true) || (editLocationDevice.name.$error.required && submitted==true) }">
+					<input type="text" maxlength=100 name="name" ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/" class="form-control elipsis" ng-model="name" required autofocus>
+					<p ng-show="(editLocationDevice.name.$error.pattern && submitted==true)"  class="help-block">Invalid device name.</p>
+					<p ng-show="(editLocationDevice.name.$error.required && submitted==true)"  class="help-block">Device name is required.</p>
+				</div>
+		</div>
+		<div class="row form-group">
+			<label class="col-xs-3">Type of Device:</label>
+			<div ng-init="getDeviceTypes()" class="col-xs-9">
+				<div uib-dropdown uib-keyboard-nav is-open="status2.isopen">
+					<button id="records-button" type="button"
+						class="form-control" uib-dropdown-toggle
+						ng-disabled="disableChange" autofocus>
+						<span class="pull-left">{{currentDeviceType.name + currentDeviceType.id}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+						<li ng-if="!(deviceType.deviceTypeId == 1 && device.deviceTypeId !=1)" ng-repeat="deviceType in deviceTypes"><a href="" ng-click="changeDeviceType(deviceType)">{{deviceType.name}}</a></li>
+					</ul>
+				
+					<p ng-if="disableChange" class="help-block">This device is a parent to some other device.</p>
+				
+				</div>
+
+			</div>
+		</div>
+
+
+		<div ng-show="currentDeviceType.category==1" class="row form-group">
+			<label class="col-xs-3">Connection Preferences:</label>
+			<div class="col-xs-9">
+						<div class="col-xs-6">
+							<label class="radio-inline"><input type="radio" ng-click="makeReload()" name="connection" value="W" ng-model="connection">WIFI</label>
+						</div>
+					
+						<div class="col-xs-6">
+							<label class="radio-inline"><input type="radio" ng-click="makeReload()" name="connection" value="G" ng-model="connection">SIM</label>
+						</div>
+				
+
+			</div>
+			
+		</div>
+
+		<div ng-show="currentDeviceType.category==1 && connection=='G'" class="row form-group">
+			<label class="col-xs-3">APN*</label>
+			<div class="col-xs-9"  ng-class="{ 'has-error' : editLocationDevice.apn.$error.required && submitted==true }">
+				<input type="text" maxlength=100 name="apn" class="form-control elipsis" ng-change="makeReload()" ng-model="apn" ng-change="makeReload()"   ng-required="currentDeviceType.category==1  && connection=='G'" autofocus>
+				<p ng-show="editLocationDevice.apn.$error.required && submitted==true "  class="help-block">APN is required.</p>
+			</div>
+		</div>
+
+		<div ng-show="currentDeviceType.category==1 && connection=='W'">
+
+			<div class="row form-group">
+			<label class="col-xs-3">SSN*</label>
+			<div class="col-xs-9"  ng-class="{ 'has-error' : editLocationDevice.ssn.$error.required && submitted==true }">
+				<input type="text" maxlength=100 name="ssn" class="form-control elipsis" ng-change="makeReload()" ng-model="ssn" ng-required="currentDeviceType.category==1 && connection=='W'" >
+				<p ng-show="editLocationDevice.ssn.$error.required && submitted==true"  class="help-block">SSN is required.</p>
+			</div>
+			</div>
+			<input type="text" hidden>
+
+			<div  class="row form-group">
+				<label class="col-xs-3">Password*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editLocationDevice.ssnpassword.$error.pattern && submitted==true) || (editLocationDevice.ssnpassword.$error.minlength && submitted==true && !editLocationDevice.ssnpassword.$error.pattern) ||  (editLocationDevice.ssnpassword.$error.required && submitted==true) }">
+					<!-- For autofill disable --><input type="password" style="" hidden>
+					<input type="password" ng-minlength="passwordValidation" maxlength="16" ng-pattern="/^\S*$/" name="ssnpassword" class="form-control" ng-change="makeReload()" ng-model="ssnpassword"   ng-required="currentDeviceType.category==1  && connection=='W'">
+					<p ng-show=" (editLocationDevice.ssnpassword.$error.pattern && submitted==true) "  class="help-block">Invalid password.</p>
+					<p ng-show=" (editLocationDevice.ssnpassword.$error.minlength && submitted==true && !editLocationDevice.ssnpassword.$error.pattern) "  class="help-block">Password must have at least 8 characters.</p>
+					<p ng-show=" (editLocationDevice.ssnpassword.$error.required && submitted==true) "  class="help-block">Password is required.</p>
+				</div>
+			</div>
+
+
+		</div>
+
+		<div ng-show="currentDeviceType.category!=1" class="row form-group">
+			<label class="col-xs-3">Gateway</label>
+			<div ng-init="getGateways()" class="col-xs-9">
+				<div uib-dropdown uib-keyboard-nav is-open="status1.isopen">
+					<button id="records-button" type="button"
+						class="form-control" uib-dropdown-toggle
+						ng-disabled="!gateways.length || disableChange">
+						<span class="pull-left">{{currentGateway.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+						<li ng-repeat="gateway in gateways"><a href="" ng-click="changeGateway(gateway)">{{gateway.name}}</a></li>
+					</ul>
+				</div>
+			<p class="haserror" ng-show="gateways.length <= 0  && submitted==true">No gateways found.There should be at least one gateway. </p>
+			</div>
+		</div>
+		<div class="row form-group">
+			
+			<label class="col-xs-3">Device Position Remarks<span ng-show="location.mapImage==null">*</span><span ng-show="location.mapImage!=null">:</span></label>
+			
+			<div class="col-xs-9" ng-class="{ 'has-error' : (editLocationDevice.locationRemarks.$error.required && submitted==true && location.mapImage==null) }">
+				<input type="text" name="locationRemarks" class="form-control" ng-required="location.mapImage == null" ng-model="locationRemarks">
+				<p ng-show=" (editLocationDevice.locationRemarks.$error.required && location.mapImage==null && submitted==true) "  class="help-block">Device Position Remarks is required if no floor plan is available.</p>
+			</div>		
+		</div>
+
+		<!--
+		<div class="row form-group">
+			
+			<label class="col-xs-3">Other Properties:</label>
+			
+			<div class="col-xs-9">
+				<input type="text" name="lastName" class="form-control" ng-model="lastName">
+			</div>		
+		</div>
+		-->
+
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button"  ng-click="submitted=true;ok('EDIT_LOCATION_DEVICE')">Save</button>
+	</div>
+</script>
+<script type="text/ng-template" id="deleteLocationDevice.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Delete Device - {{device.name}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+		
+	</div>
+	<form name="deleteUser" ng-init="submitted=false;">
+	<div class="modal-body">
+		<label>Do you really want to Delete?</label>
+	</div>
+	<div class="modal-footer">
+		<button style="width:12%" class="btn btn-default" type="button" ng-click="cancel()">No</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('DELETE_LOCATION_DEVICE')">Yes</button>
+	</div>
+	</form>
+</script>
+<script type="text/ng-template" id="deleteLocation.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Delete Location - {{location.locationName}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+		
+	</div>
+	<form name="deleteUser" ng-init="submitted=false;">
+	<div class="modal-body">
+		<label>Do you really want to Delete?</label>
+	</div>
+	<div class="modal-footer">
+		<button style="width:12%" class="btn btn-default" type="button" ng-click="cancel()">No</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('DELETE_LOCATION')">Yes</button>
+	</div>
+	</form>
+</script>
+<script type="text/ng-template" id="editInventory.html" >
+	<div class="modal-header" ng-init="isShowCustomerNames=false;isShowFranchiseNames=false">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Edit - {{titlename}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+		
+	</div>
+	<div class="modal-body">
+		<form name="editInventoryForm" ng-keypress="enterKeyEvent($event,'EDIT_INVENTORY')" autocomplete="off" ng-init="submitted=false;">
+			<div class="row form-group">
+				<label class="col-xs-3">Name*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editInventoryForm.name.$error.pattern && submitted==true) || (editInventoryForm.name.$error.required && submitted==true) }">
+					<input type="text" maxlength=100 name="name" ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/" class="form-control elipsis" ng-model="name" required autofocus>
+					<p ng-show="(editInventoryForm.name.$error.pattern && submitted==true)"  class="help-block">Invalid name.</p>
+					<p ng-show="(editInventoryForm.name.$error.required && submitted==true)"  class="help-block">Name is required.</p>
+				</div>
+			</div>
+			<div class="row form-group">
+				<label class="col-xs-3">Description</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : editInventoryForm.description.$invalid && !editInventoryForm.description.$pristine }">
+					<input type="text" name="description" class="form-control" ng-model="description" autofocus>
+					<p ng-show="editInventoryForm.description.$invalid && !editInventoryForm.description.$pristine"  class="help-block">Invalid description.</p>
+				</div>
+			</div>
+			<div class="row form-group">
+				<label class="col-xs-3">Type</label>
+				<div ng-init="getDeviceTypes()" class="col-xs-9">
+					<div uib-dropdown uib-keyboard-nav is-open="status2.isopen">
+						<button id="records-button" type="button"
+							class="form-control" uib-dropdown-toggle
+							ng-disabled="true">
+							<span class="pull-left">{{currentDeviceType.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+						</button>
+						<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+							<li ng-repeat="deviceType in deviceTypes"><a href="" ng-click="changeDeviceType(deviceType)">{{deviceType.name}}</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
+		<div ng-show="currentDeviceType.category==1" class="row form-group">
+			<label class="col-xs-3">Connection Preferences:</label>
+			<div class="col-xs-9">
+						<div class="col-xs-6">
+							<label class="radio-inline"><input type="radio" name="connection" value="W" ng-model="connection">WIFI</label>
+						</div>
+					
+						<div class="col-xs-6">
+							<label class="radio-inline"><input type="radio" name="connection" value="G" ng-model="connection">SIM</label>
+						</div>
+			</div>
+			
+		</div>
+
+		<div ng-show="currentDeviceType.category==1 && connection=='G'" class="row form-group">
+			<label class="col-xs-3">APN*</label>
+			<div class="col-xs-9"  ng-class="{ 'has-error' : editInventoryForm.apn.$error.required && submitted==true }">
+				<input type="text" maxlength=100 name="apn" class="form-control elipsis"  ng-change="makeReload()" ng-model="apn" ng-required="currentDeviceType.category==1 && connection=='G'" autofocus>
+				<p ng-show="editInventoryForm.apn.$error.required && submitted==true "  class="help-block">APN is required.</p>
+			</div>
+		</div>
+
+		<div ng-show="currentDeviceType.category==1 && connection=='W'">
+
+			<div class="row form-group">
+			<label class="col-xs-3">SSN*</label>
+			<div class="col-xs-9"  ng-class="{ 'has-error' : editInventoryForm.ssn.$error.required && submitted==true }">
+				<input type="text" maxlength=100 name="ssn" class="form-control elipsis" ng-change="makeReload()"  ng-model="ssn" ng-required="currentDeviceType.category==1 && connection=='W'" >
+				<p ng-show="editInventoryForm.ssn.$error.required && submitted==true"  class="help-block">SSN is required.</p>
+			</div>
+			</div>
+			<input type="text" hidden>
+
+			<div  class="row form-group">
+				<label class="col-xs-3">Password*</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editInventoryForm.ssnpassword.$error.pattern && submitted==true) || (editInventoryForm.ssnpassword.$error.minlength && submitted==true && !editInventoryForm.ssnpassword.$error.pattern) ||  (editInventoryForm.ssnpassword.$error.required && submitted==true) }">
+					<!-- For autofill disable --><input type="password" style="" hidden>
+					<input type="password" ng-minlength="passwordValidation" maxlength="16" ng-pattern="/^\S*$/" name="ssnpassword" class="form-control"  ng-change="makeReload()"  ng-model="ssnpassword"   ng-required="currentDeviceType.category==1 && connection=='W'">
+					<p ng-show=" (editInventoryForm.ssnpassword.$error.pattern && submitted==true) "  class="help-block">Invalid password.</p>
+					<p ng-show=" (editInventoryForm.ssnpassword.$error.minlength && submitted==true && !editLocationDevice.ssnpassword.$error.pattern) "  class="help-block">Password must have at least 8 characters.</p>
+					<p ng-show=" (editInventoryForm.ssnpassword.$error.required && submitted==true) "  class="help-block">Password is required.</p>
+				</div>
+			</div>
+
+
+		</div>
+
+		<div ng-show="currentDeviceType.category!=1" class="row form-group">
+			<label class="col-xs-3">Gateway</label>
+			<div ng-init="getGateways()" class="col-xs-9">
+				<div uib-dropdown uib-keyboard-nav is-open="status1.isopen">
+					<button id="records-button" type="button"
+						class="form-control" uib-dropdown-toggle
+						ng-disabled="true">
+						<span class="pull-left">{{currentGateway.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+						<li ng-repeat="gateway in gateways"><a href="" ng-click="changeGateway(gateway)">{{gateway.name}}</a></li>
+					</ul>
+				</div>
+
+			</div>
+		</div>
+
+			<div class="row form-group">
+				<label class="col-xs-3">Unique SN</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editInventoryForm.serialNumber.$error.pattern  && submitted==true) ||  (editInventoryForm.serialNumber.$error.required  && submitted==true)}">
+					<input type="text" name="serialNumber" class="form-control" ng-model="serialNumber" ng-disabled="true">
+					<p ng-show="(editInventoryForm.serialNumber.$error.pattern  && submitted==true)"  class="help-block">Invalid unique serial number.</p>
+					<p ng-show="(editInventoryForm.serialNumber.$error.required  && submitted==true)"  class="help-block">Unique serial number is required.</p>
+				</div>
+			</div>
+
+<!--
+			<div class="row form-group">
+				<label class="col-xs-3">Location Type</label>
+				<div class="col-xs-9">
+					<div uib-dropdown uib-keyboard-nav is-open="status3.isopen">
+						<button id="records-button" type="button"
+							class="form-control" uib-dropdown-toggle
+							ng-disabled="true">
+							<span class="pull-left">{{selectedLocationType.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+						</button>
+						<ul uib-dropdown-menu role="menu" class="scrollable-menu" aria-labelledby="records-button">
+							<li ng-repeat="locationType in locationTypes"><a href="" ng-click="selectLocationType(locationType)">{{locationType.name}}</a></li>
+						</ul>
+<!--
+							<p ng-if='selectedLocationType.id==1 && totalFranchises<=0'  class="help-block">No franchisees found</p>
+							<p ng-if='selectedLocationType.id==2 && totalSites<=0'  class="help-block">No sites found</p>
+comment close here if enabled agn
+					</div>
+				</div>
+			</div>
+-->
+
+			<div ng-init="getFranchisees()" ng-if='selectedLocationType.id==1' class="row form-group">
+				<label class="col-xs-3">Franchisees</label>
+				<div class="col-xs-9">
+					<div uib-dropdown uib-keyboard-nav is-open="status4.isopen">
+						<button id="records-button" type="button"
+							class="form-control" uib-dropdown-toggle
+							ng-disabled="totalFranchises <=0">
+							<span class="pull-left">{{selectedFranchise.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+						</button>
+						<ul uib-dropdown-menu  class="scrollable-menu" role="menu" aria-labelledby="records-button">
+							<li ng-repeat="franchise in franchises"><a href="" ng-click="selectFranchise(franchise)">{{franchise.name}}</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div ng-init="getSites()" ng-if='selectedLocationType.id==2' class="row form-group">
+				<label class="col-xs-3">Sites</label>
+				<div class="col-xs-9">
+					<div uib-dropdown uib-keyboard-nav is-open="status5.isopen">
+						<button id="records-button" type="button"
+							class="form-control" uib-dropdown-toggle
+							ng-disabled="true">
+							<span class="pull-left">{{selectedSite.name}}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="caret pull-right margin_top_2perc"></span>
+						</button>
+						<ul uib-dropdown-menu class="scrollable-menu" role="menu" aria-labelledby="records-button">
+							<li ng-repeat="site in sites"><a href="" ng-click="selectSite(site)">{{site.name}}</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="row form-group">
+				<label class="col-xs-3">Device Position Remarks</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : editInventoryForm.locationRemarks.$error.required && submitted==true }">
+					<input type="text" name="locationRemarks" class="form-control" ng-model="locationRemarks" ng-disabled="true">
+					<p ng-show="editInventoryForm.locationRemarks.$error.required && submitted==true"  class="help-block">Location is required.</p>
+				</div>
+			</div>
+	
+
+			<div class="row form-group">
+				<div class="col-xs-3">
+					<label for="sitePoDate">Battery Date</label>
+				</div>
+				<div class="col-xs-9" ng-class="{ 'has-error' : (editInventoryForm.batteryDate.$invalid && submitted==true) }">
+				<p class="input-group">
+					<input type="text" name="batteryDate" class="form-control"
+							ng-disabled="billingFieldDisable"
+								uib-datepicker-popup="{{format}}" ng-model="batteryDate"
+								is-open="isOpened1" close-text="Close"
+								show-button-bar="false"
+								 datepicker-options="{ showWeeks:false }" /> <span
+								class="input-group-btn">
+								<button type="button" class="btn btn-default"
+									ng-disabled="billingFieldDisable"
+									ng-click="isOpened1 = !isOpened1;format='dd/MM/yyyy'">
+									<i class="glyphicon glyphicon-calendar"></i>
+									</button>
+								</span>
+								</p>
+					<p
+												ng-show="(editInventoryForm.batteryDate.$invalid && submitted==true)"
+												class="help-block">Invalid battery date. </p>
+				</div>
+			</div>
+
+			<div class="row form-group">
+				<label class="col-xs-3">Brand</label>
+				<div class="col-xs-9" ng-class="{ 'has-error' : editInventoryForm.brand.$invalid && !editInventoryForm.brand.$pristine }">
+					<input type="text" name="brand" class="form-control" ng-model="brand">
+					<p ng-show="editInventoryForm.brand.$invalid && !editInventoryForm.brand.$pristine"  class="help-block">Invalid brand.</p>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('EDIT_INVENTORY')">Save</button>
+	</div>
+</script>
+<script type="text/ng-template" id="deleteSiteInventory.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Delete Site Inventory {{data.data.deviceName}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+		
+	</div>
+	<form name="deleteUser" ng-init="submitted=false;">
+	<div class="modal-body">
+		<label>Do you really want to Delete?</label>
+	</div>
+	<div class="modal-footer">
+		<button style="width:12%" class="btn btn-default" type="button" ng-click="cancel()">No</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('DELETE_SITE_INVENTORY')">Yes</button>
+	</div>
+	</form>
+</script>
+<script type="text/ng-template" id="confirmEditLocation.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Devices Exist! {{data.data.deviceName}}</span>
+			</div>
+		</div>
+		
+	</div>
+	<form name="deleteUser" ng-init="submitted=false;">
+	<div class="modal-body">
+		<label>Position of all devices will get Reset. Do you really want to upload a new map?</label>
+	</div>
+	<div class="modal-footer">
+		<button style="width:12%" class="btn btn-default" type="button" ng-click="cancelFileUpload()">No</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('CONFIRM_EDIT_LOCATION')">Yes</button>
+	</div>
+	</form>
+</script>
+
+<script type="text/ng-template" id="reloadConfig.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Device Configuration Changed</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+		
+	</div>
+	<form name="reloadConfigForm" ng-init="submitted=false;">
+	<div class="modal-body">
+		You modified the configuration, please reload new configuration.
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" type="button" ng-click="ok('RELOAD_CONFIG')">Reload</button>
+	</div>
+	</form>
+</script>

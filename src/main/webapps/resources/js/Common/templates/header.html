@@ -1,0 +1,84 @@
+
+<div class="container-fluid  main_header">
+	<div class="navbar-header">
+		<a class=" navbar-brand main_header_label" 
+			ng-click="tactive=true"> <span><img class="img_logo"  alt="logo"
+				src="core/resources/images/firetweet_logo_1.png"></span>
+			FireTweet
+		
+		</a>
+
+	</div>
+	 <ul class="navbar-right list-inline user_help" ng-show="isloggedIn">
+		<li><a class="nounderline"><span
+				class="glyphicon glyphicon-user"></span>Welcome <span ng-bind="firstName + ' ' + lastName"></span>
+				</a></li><span>|</span>
+		<!--  <li><a ui-sref="login"><span class="glyphicon glyphicon-off"></span>
+				Logout</a></li>-->
+		<li>
+		<div class="btn-group" uib-dropdown>
+      <button id="split-button" type="button" class="btn btn-default">{{firstName+' '+ lastName}}</button>
+      <button type="button" class="btn btn-default" uib-dropdown-toggle>
+        <span class="caret"></span>
+        <span class="sr-only">Split button!</span>
+      </button>
+      <ul uib-dropdown-menu role="menu" class="profile" aria-labelledby="split-button " >
+        <li role="menuitem"  ng-click="open('md','profile.html',profile, getProfile);"><a  class="glyphicon glyphicon-user" > My Profile</a></li>
+        <li role="menuitem" ng-click="logoutCall()"><a><a class="glyphicon glyphicon-off"> Logout</a></a></li>
+      </ul>
+    </div>
+    </li>
+	</ul>
+</div>
+
+<script type="text/ng-template" id="profile.html">
+	<div class="modal-header">
+		<span class="modal-title">My Profile<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form>
+		<div class="row form-group">
+			<label class="col-xs-3">First Name</label>
+			<div class="col-xs-9">
+				<input type="text" class="form-control" ng-model="fName" required>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			
+			<label class="col-xs-3"> Last Name </label>
+			
+			<div class="col-xs-9">
+				<input type="text" class="form-control" ng-model="lName" required>
+			</div>		
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3"> New Password</label>
+			<div class="col-xs-9">
+				<input type="password" class="form-control" ng-model="newPassword" required>
+			</div>
+		</div>
+		
+		<div class="row form-group">
+			<label class="col-xs-3"> Confirm Password</label>
+			<div class="col-xs-9">
+				<input type="password" class="form-control" ng-model="confirmPassword" required>
+			</div>
+		</div>
+		
+		<div class="row form-group">
+			<label class="col-xs-3"> Contact Number </label>
+			<div class="col-xs-9">
+				<input type="text" class="form-control" ng-model="contact">
+			</div>
+		</div>
+
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('UPDATE_PROFILE')">Save</button>
+	</div>
+	</script>
+	

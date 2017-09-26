@@ -1,0 +1,693 @@
+
+<div class="row">
+	<!-- <div class="col-sm-4">
+		<h3 class="title">T{{ticket.id}} (Open)</h3>
+	</div> -->
+	<div class="col-xs-3 title">T{{ticket.id}} ({{ SelectedState.name }})</div>
+	<div class="col-xs-9">
+		<div class="pull-right ticket_problem_indicator elipsis">
+			<span class="col-xs-12 remove_left_right_padding">SERVICE TICKET</span>
+			<span class="col-xs-12 remove_left_right_padding elipsis" ng-show="(ticket.customerName)"> Customer: {{ (ticket.customerName) }} </span>
+			<span class="col-xs-12 remove_left_right_padding elipsis" ng-show="(ticket.siteName)"> Site: {{ (ticket.siteName) }} </span>
+		</div>
+	</div>
+</div>
+	<div>
+		<div class="row"><span class="subheader">Ticket Details</span></div>
+		<form name="ticketInfo" novalidate>
+			<div class="subheaderDiv margin_top_1perc">
+				<div class="details">
+					<div class="row margin_top_2perc">
+						<div class="col-xs-4">
+							<span class="contact">DETAILS</span>
+							
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label>Ticket type</label>
+								</div>
+								<div class="col-xs-8">
+										<span>{{ getTicketType(ticket.ticketType).name }}</span>
+								</div>
+							</div>
+									
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label>Timestamp</label>
+								</div>
+								<div class="col-xs-8">
+									<span>{{  (ticket.createdDate | date:'dd/MM/yyyy HH:mm:ss')? (ticket.createdDate | date:'dd/MM/yyyy HH:mm:ss'): '-'}}</span>
+								</div>
+							</div>
+									
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label>Description</label>
+								</div>
+								<div class="col-xs-8">
+								<!-- <label>{{ ticket.description }}</label> -->
+									<textArea class="form-control description" maxlength=500 ng-model="ticket.description" ng-disabled="FieldDisable" rows="2" 
+										name="description"></textArea>
+								</div>
+							</div>
+							<!-- <div class="row form-group">
+								<div class="col-xs-4">
+									<label>Comment*</label>
+								</div>
+								<div class="col-xs-8"
+									ng-class="{'has-error': ticketInfo.comment.$error.required && submitted==true }">
+									<textArea class="form-control" maxlength=500 ng-model="ticket.comment" ng-disabled="statusdisabled" rows="1"
+										name="comment" required></textArea>
+									<p
+										ng-show="ticketInfo.comment.$error.required && submitted==true"
+										class="help-block">Comment is required.</p>
+								</div>
+							</div> -->
+						</div>
+
+						<div class="col-xs-4">
+						<span class="contact">LOCATION</span>		
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label>Customer</label>
+								</div>
+								<div class="col-xs-8 elipsis">
+									<span>{{ (ticket.customerName)?ticket.customerName: (ticket.referenceName)?ticket.referenceName:'-'  }}</span>
+								</div>
+							</div>
+							
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label>Site</label>
+								</div>
+								<div class="col-xs-8 elipsis">
+									<span>{{ (ticket.siteName)?ticket.siteName:'-' }}</span>
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label>Location</label>
+								</div>
+								<div class="col-xs-8">
+									<span>{{ (ticket.locationName)?ticket.locationName: '-' }}</span>
+								</div>
+							</div>
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label>Device</label>
+								</div>
+								<div class="col-xs-8">
+									<span>{{ (ticket.deviceName)?ticket.deviceName: '-' }} <span ng-show="ticket.deviceName"> ({{  (ticket.deviceName)? (getSensor(ticket.deviceType)):'' }})</span></span>
+								</div>
+							</div>
+						</div>
+						
+						
+						<div class="col-xs-4">
+						<span class="contact">TICKET INFO</span>		
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label>Ticket State</label>
+								</div>
+								<div class="col-xs-8">
+									
+									<div class="btn-group dropdown width_100perc" uib-dropdown uib-keyboard-nav is-open="status1.isopen">
+										<button id="records-button" type="button" ng-disabled="FieldDisable || ticket.state==5"
+											class="btn btn-default form-control" uib-dropdown-toggle>
+											<span>{{ SelectedState.name }}</span><span
+												class="caret pull-right ticket_details_dropdown_caret"></span>
+										</button>
+									<ul uib-dropdown-menu role="menu"
+										aria-labelledby="records-button">
+										<li ng-repeat= "state in  states" ng-click="setTicketState(state)"><a href="">{{state.name}}</a></li>
+									</ul>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row form-group">
+								<div class="col-xs-4">
+									<label>Ticket Status </label>
+								</div>
+								<div class="col-xs-8">
+									<div class="btn-group dropdown width_100perc" uib-dropdown uib-keyboard-nav is-open="status7.isopen">
+										<button id="closed-records-button" type="button" ng-disabled="statusdisabled || ticket.state==5"
+											class="btn btn-default form-control" uib-dropdown-toggle>
+											<span>{{SelectedticketStatus.name}}</span><span
+												class="caret pull-right ticket_details_dropdown_caret"></span>
+										</button>
+									<ul uib-dropdown-menu role="menu"
+										aria-labelledby="records-button">
+										<li ng-repeat= "ticket_status in  ticketStatus" ng-click="setTicketActionState(ticket_status)"><a href="">{{ticket_status.name}}</a></li>
+									</ul>
+									</div>
+								</div>
+							</div>
+						<div class="row form-group">
+							<div class="col-xs-4">
+								<label>Assigned To</label>
+							</div>
+							<div class="col-xs-8">
+								<div class="dropdown btn-group width_100perc" uib-dropdown 
+									uib-keyboard-nav is-open="status17.isopen">
+									<button type="button" class="btn btn-default form-control"
+										ng-disabled="nositeUsers || ticket.state==5" uib-dropdown-toggle>
+										<span class="pull-left">{{ticketassignee}}
+										</span><span 
+											class="pull-right caret ticket_details_dropdown_caret"></span>
+									</button>
+									<ul uib-dropdown-menu role="menu" class="scrollable-menu"
+										aria-labelledby="dropdown_in_filter">
+										<li ng-repeat="siteuser in  siteusers" 
+											ng-click="setSiteuser(siteuser);"
+											style="overflow: hidden; text-overflow: ellipsis"><a
+											href="">{{siteuser.firstName + " " + siteuser.lastName}}
+										</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-xs-4">
+								<label>Expected Time*</label>
+							</div>
+							<div class="col-xs-8" data-tip="Expected Time in Hours"
+								ng-class="{ 'has-error' : (ticketInfo.eta.$error.pattern && submitted==true) || (ticketInfo.eta.$error.required && submitted==true)}">
+								<input type="text" ng-pattern="/^[0-9]*$/" maxlength=8 placeholder="ETA in Hours" 
+									class="form-control" ng-model="ticket.eta" name="eta" required ng-disabled="FieldDisable || ticket.state==5" >
+								<p
+									ng-show="ticketInfo.eta.$error.pattern && submitted==true"
+									class="help-block">Invalid Expected Time.</p>
+								<p
+									ng-show="ticketInfo.eta.$error.required && submitted==true"
+									class="help-block">Expected Time is required.</p>
+							</div>
+						</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<button class="btn btn-default editBtn"
+				ng-hide="editTicketDetails" ng-click="enableFormFields()">Edit</button>
+
+			<button class="btn btn-default editBtn" ng-hide="saveDisable"
+				ng-click="save($event)">Save</button>
+			<button class="btn btn-default editBtn margin_left_1perc"
+				ng-click="cancelInfo()" ng-hide="saveDisable">Cancel
+			</button>
+			
+		</form>
+	</div>
+
+	<div ng-show="ticket.ticketType == 3 ">
+	<br>
+		<div class="row"><span class="subheader">Attachments/Documents<!-- <a class="refresh margin_left_2perc">Add New Attachment</a> --></span></div>
+		<form>
+			<div class="subheaderDiv margin_top_1perc">
+				<div class="details">
+					<div class="row margin_top_2perc">
+						<div class="col-xs-4">
+						<p class="contact"></p>		
+							<div class="row form-group">
+								<div class="col-xs-5">
+									<label>Audit Report</label>
+								</div>
+								<div class="col-xs-7">
+									<a class="refresh" csv-header="csvHeaders1" ng-csv="csvSiteAudit" filename="SiteAudit.csv">Download</a>
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-xs-5">
+									<label>BOQ</label>
+								</div>
+								<div class="col-xs-7">
+									<a class="refresh" csv-header="csvHeaders" ng-csv="csvSiteBOQ" filename="SiteBOQ.csv">Download</a>
+								</div>
+							</div>
+
+							<!-- <div class="row form-group">
+								<div class="col-xs-5">
+									<label>More Documents</label>
+								</div>
+								<div class="col-xs-7">
+									<a class="refresh">Download</a>
+								</div>
+							</div> -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+	<div>
+	<div class="row margin_top_2perc"><span class="subheader">Ticket History</span></div>
+<div class="table-responsive">
+  		<table class="table table-striped margin_top_1perc">
+	  		<thead>
+				<th>Ticket ID</th>
+		       <th>Modified By</th>
+		        <th>Date & Time</th>
+		        <th>Status</th>
+		        <th>Comment</th>
+		        <th>Assignee</th>
+		        <th class="min_width_100px">Expected Time</th>
+			</thead>
+				
+			<tbody>
+				<tr ng-repeat="history in ticketHistory">
+				
+					<td>T{{ (history.ticketId)?(history.ticketId):'-' }}</td>
+					<td>{{ (history.modifierEmail)}}</td>
+					<td>{{ (history.date | date:'dd/MM/yyyy HH:mm:ss')? (history.date | date:'dd/MM/yyyy HH:mm:ss'): '-' }}</td>
+					<td>{{ (history.status)? getTicketStatus(history.status).name: '-' }}</td>
+					<td>{{ (history.comment)? (history.comment) : '-' }}</td>
+					<td>{{ (history.assigneeEmail)? (history.assigneeEmail):'-' }}</td>
+					<td>{{ (history.eta) }} h</td>
+					
+				</tr>
+				<tr ng-show="!ticketHistory.length"><td colspan="8" class="text-center">No Records Found</td></tr>
+			</tbody>
+		</table>
+	</div>
+	</div>
+	
+	<div>
+	<div class="row"><span class="subheader">Ticket Expenses</span></div>
+	<div class="table-responsive">
+  		<table class="table table-striped margin_top_1perc">
+	  		<thead>
+				<th>Total Expense</th>
+				<th>Submitted By</th>
+		        <th>Date</th>
+		      	<th>Notes</th>
+			</thead>
+				
+			<tbody>
+				<tr ng-repeat="expense in ticketexpense">
+				
+					<td>{{ (expense.amount)?(expense.amount):'-' }} Rs</td>
+					<td>{{ (expense.firstName)}} &nbsp;&nbsp; {{ (expense.lastName)}} </td>
+					<td>{{ (expense.expenseDate | date:'dd/MM/yyyy HH:mm:ss')? (expense.expenseDate | date:'dd/MM/yyyy HH:mm:ss'): '-' }}</td>
+					<td>{{ (expense.note)? (expense.note):'-' }}</td>
+					
+				</tr>
+				<tr ng-show="!ticketexpense.length"><td colspan="4" class="text-center">No Records Found</td></tr>
+			</tbody>
+		</table>
+	</div>
+	</div>
+	
+	<div>
+	<div class="row"><span class="subheader">Ticket Actions</span></div>
+<div class="ticketAction margin_top_1perc">
+		<div class="row form-group" ng-show="(ticket.siteName)">
+			<div class="col-xs-2">
+				<label class="ticketActionLabel"><b>SITE DETAILS</b></label>
+			</div>
+			<div class="col-xs-8">
+				<!-- <button ng-if="isFTAdmin || isFTSupervisor || isFTCR "class="btn ticketAction_btn"  ui-sref="common.dashboard.customers.customerdetails.sitedetails({id:ticket.custId, name:ticket.customerName,siteid :ticket.siteId,sitename:ticket.siteName})" >{{ticket.siteName}}</button>
+				<button ng-if="isCustomerAdmin || isCL2 || isCL3" class="btn ticketAction_btn"  ui-sref="common.dashboard.customerdetails.sitedetails({id:ticket.custId, name:ticket.customerName,siteid :ticket.siteId,sitename:ticket.siteName})" >{{ticket.siteName}}</button>
+				<button ng-if="isFTInstaller" class="btn ticketAction_btn"  ui-sref="common.dashboard.sites.sitedetails({id:ticket.custId, name:ticket.customerName,siteid :ticket.siteId,sitename:ticket.siteName})" >{{ticket.siteName}}</button>
+				<button ng-if="isFranchiseAdmin || isFL2" class="btn ticketAction_btn"  ui-sref="common.dashboard.franchisedetails.sitedetails({id:loginData.userId,siteid :ticket.siteId,sitename:ticket.siteName})" >{{ticket.siteName}}</button>
+				<button ng-if="isFTOperator" class="btn ticketAction_btn" ng-disabled="true" >{{ticket.siteName}}</button> -->
+				<button ng-disabled="isFTOperator" class="btn ticketAction_btn elipsis"  ui-sref="common.dashboard.tickets.servicetickets.details.sitedetails({id:loginData.referenceId,siteid :ticket.siteId,sitename:ticket.siteName})" >{{ticket.siteName}}</button>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<div class="col-xs-2">
+				<label class="ticketActionLabel"><b>CONTACT</b></label>
+			</div>
+			<div class="col-xs-2">
+				<button ng-click="open('md','contactCustomer.html',ticket);" 
+					type="button" class="btn ticketAction_btn">Contact Customer
+				</button>
+			</div>
+			<div class="col-xs-2">
+				<button ng-click="open('md','contactVendor.html',ticket);" 
+					type="button" class="btn ticketAction_btn">Contact Vendor
+				</button>
+			</div>
+			<div class="col-xs-2">
+				<button ng-click="open('md','contactFt.html',ticket);" 
+					type="button" class="btn ticketAction_btn">Contact Firetweet
+				</button>
+			</div>
+		</div>
+		
+		<!-- <div class="row form-group">
+			<div class="col-xs-2">
+				<label class="ticketActionLabel"><b>ASSIGN</b></label>
+			</div>
+			<div class="col-xs-8">
+				<button ng-click="open('md','changeAssignee.html');" 
+					type="button" class="btn ticketAction_btn">Change Assignee
+				</button>
+			</div>
+		</div> -->
+		
+		<!-- <div class="row form-group">
+			<div class="col-xs-2">
+				<label class="ticketActionLabel"><b>RESOLVE</b></label>
+			</div>
+			<div class="col-xs-2">
+				<button ng-click="open('md','markAsResolved.html');" 
+					type="button" class="btn ticketAction_btn">Mark as Resolved
+				</button>
+			</div>
+			<div class="col-xs-2">
+				<button ng-click="open('md','updateStatus/Comments.html');" 
+					type="button" class="btn ticketAction_btn">Update Status/Comments
+				</button>
+			</div>
+			<div class="col-xs-2">
+				<button ng-click="open('md','markAsClosed.html');" 
+					type="button" class="btn ticketAction_btn">Mark as Closed
+				</button>
+			</div>
+		</div> -->
+	</div>
+	</div>
+
+
+<script type="text/ng-template" id="contactCustomer.html" >
+	<div class="modal-header">
+		<span class="modal-title">T{{data.data.id}} - Contact Customer<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form name="contactCustomer" novalidate>
+		<div class="row form-group">
+			<label class="col-xs-3">Select Contact</label>
+			<div class="col-xs-9">
+				<div class="btn-group" uib-dropdown is-open="status2.isopen" style="width: 100%">
+					<button id="records-button" type="button" ng-disabled="primaryContact == null && primaryContactForSite == null && escalationContact == null"
+						class="btn btn-default form-control" uib-dropdown-toggle>
+						<span class="pull-left" >{{currentContact.name }}</span>&nbsp;<span
+							class="pull-right caret dropdown_caret_popup_ticketdetails"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu"
+						aria-labelledby="records-button">
+						<li ng-if="primaryContact != null" ng-click="setName(primaryContact)"><a>{{ primaryContact.name }}</a></li>
+						<li ng-if="primaryContactForSite != null" ng-click="setName(primaryContactForSite)"><a>{{ primaryContactForSite.name }}</a></li>
+						<li ng-if="escalationContact != null" ng-click="setName(escalationContact)"><a>{{ escalationContact.name }}</a></li>
+						<li ng-if="primaryContact == null && primaryContactForSite == null && escalationContact == null" ><a>No Contacts Found.</a></li>
+					</ul>
+				</div>
+			<p class="help-block" style="color:#a94442;" ng-show="submitted==true && primaryContact == null && primaryContactForSite == null && escalationContact == null"> No customer contacts found. You can not contact to customer. </p>
+			</div>
+		</div>
+
+		<!--<div class="row form-group">
+			<label class="col-xs-3">Select Purpose</label>
+			<div class="col-xs-9">
+				<div class="btn-group" uib-dropdown is-open="status2.isopen" style="width: 100%">
+					<button id="records-button" type="button"
+						class="btn btn-default form-control" uib-dropdown-toggle>
+						<span class="pull-left">{{currentStatus.name}}</span>&nbsp;<span
+							class="pull-right caret dropdown_caret_popup_ticketdetails"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu"
+						aria-labelledby="records-button">
+						<li ng-click="currentStatus = {id : 1,name : 'ACTIVE'}"><a>ACTIVE</a></li>
+						<li ng-click="currentStatus = {id : 2,name : 'INACTIVE'}"><a>INACTIVE</a></li>
+						<li ng-click="currentStatus = {id : 3,name : 'DELETE'}"><a>DELETE</a></li>
+					</ul>
+				</div>
+			</div>
+		</div> -->
+
+		<div class="row form-group">
+			<label class="col-xs-3">Comment*</label>
+			<div class="col-xs-9" ng-class="{'has-error': contactCustomer.comment.$error.required && submitted==true }">
+				<textArea class="form-control" maxlength=500 ng-model="comment" name="comment" required></textArea>
+				<p ng-show="contactCustomer.comment.$error.required && submitted==true" class="help-block">Comment is required.</p>
+			</div>
+		</div>
+
+		<!--<div class="row form-group">
+			<label class="col-xs-3">Add a Message to Ticket</label>
+			<div class="col-xs-9">
+				<input type="text" class="form-control">
+			</div>
+		</div> -->
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" style="width:20%;" ng-click="ok('CONTACT_CUSTOMER',$event);" >Send Message</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="contactVendor.html" >
+	<div class="modal-header">
+		<span class="modal-title">T{{data.data.id}} - Contact Vendor<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form name="contactCustomer" novalidate>
+		<div class="row form-group">
+			<label class="col-xs-3">Contact</label>
+			<div class="col-xs-9">
+				<div class="btn-group" uib-dropdown is-open="status2.isopen" style="width: 100%">
+					<button id="records-button" type="button" ng-disabled="vendorContact.name == null"
+						class="btn btn-default form-control" uib-dropdown-toggle>
+						<span class="pull-left"ng-if="vendorContact.name != null">{{ vendorContact.name }}</span>
+						<span class="pull-left" ng-if="vendorContact.name == null"> No Contact Found.</span>&nbsp;<span
+							class="pull-right caret dropdown_caret_popup_ticketdetails"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu"
+						aria-labelledby="records-button">
+						<li><a href="">{{ vendorContact.name }}</a></li>
+					</ul>
+				</div>
+				<p class="haserror" ng-if="vendorContact.name == null && submitted == true"> No vendor contact found. You can not contact to vendor.</p>
+				<!--<label for="contact" ng-if="vendorContact.name != null">{{ vendorContact.name }}</label>
+				<label for="contact" ng-if="vendorContact.name == null"> No contact found. </label>-->
+				
+			</div>
+		</div>
+
+		<!--<div class="row form-group">
+			<label class="col-xs-3">Select Purpose</label>
+			<div class="col-xs-9">
+				<div class="btn-group" uib-dropdown is-open="status2.isopen" style="width: 100%">
+					<button id="records-button" type="button"
+						class="btn btn-default form-control" uib-dropdown-toggle>
+						<span class="pull-left">{{currentStatus.name}}</span>&nbsp;<span
+							class="pull-right caret dropdown_caret_popup_ticketdetails"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu"
+						aria-labelledby="records-button">
+						<li ng-click="currentStatus = {id : 1,name : 'ACTIVE'}"><a>ACTIVE</a></li>
+						<li ng-click="currentStatus = {id : 2,name : 'INACTIVE'}"><a>INACTIVE</a></li>
+						<li ng-click="currentStatus = {id : 3,name : 'DELETE'}"><a>DELETE</a></li>
+					</ul>
+				</div>
+			</div>
+		</div> -->
+
+		<div class="row form-group">
+			<label class="col-xs-3">Comment*</label>
+			<div class="col-xs-9" ng-class="{'has-error': contactCustomer.comment.$error.required && submitted==true }">
+				<textArea class="form-control" maxlength=500 ng-model="comment" name="comment" required></textArea>
+				<p ng-show="contactCustomer.comment.$error.required && submitted==true" class="help-block">Comment is required.</p>
+			</div>
+		</div>
+
+		<!--<div class="row form-group">
+			<label class="col-xs-3">Add a Message to Ticket</label>
+			<div class="col-xs-9">
+				<input type="text" class="form-control">
+			</div>
+		</div> -->
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" style="width:20%;" ng-click="ok('CONTACT_VENDOR',$event);"  >Send Message</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="contactFt.html" >
+	<div class="modal-header">
+		<span class="modal-title">T{{data.data.id}} - Contact FT<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+	<form name="contactFT"  ng-keypress="enterKeyEvent($event,'CONTACT_FT')" ng-init="submitted=false;" novalidate>
+		<div class="row form-group">
+			<label class="col-xs-3">Select Contact</label>
+			<div class="col-xs-9">
+				<div class="btn-group" uib-dropdown is-open="status2.isopen" style="width: 100%">
+					<button id="records-button" type="button"
+						class="btn btn-default form-control" uib-dropdown-toggle>
+						<span class="pull-left">{{ftuser.firstName + " " + ftuser.lastName}}</span>&nbsp;<span
+							class="pull-right caret dropdown_caret_popup_ticketdetails"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu" class="scrollable-menu"
+						aria-labelledby="records-button">
+						<!--<li ng-click="ftuser = [];ftuser.firstName ='Select FT user'; "><a>Select FT user</a></li> -->
+						<li ng-repeat="ftuser in ftadmins" ng-click="setFTuser(ftuser);" style="overflow: hidden; text-overflow: ellipsis"><a
+						 href="">{{ftuser.firstName + " " + ftuser.lastName}} </a></li>
+						<li ng-repeat="ftuser in operators" ng-click="setFTuser(ftuser);" style="overflow: hidden; text-overflow: ellipsis"><a
+						 href="">{{ftuser.firstName + " " + ftuser.lastName}} </a></li>
+						<li ng-repeat="ftuser in ftsupervisors" ng-click="setFTuser(ftuser);" style="overflow: hidden; text-overflow: ellipsis"><a
+						 href="">{{ftuser.firstName + " " + ftuser.lastName}} </a></li>
+						<li ng-if="!ftadmins.length && !operators.length && !ftsupervisors.length"><a> No FT users found</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<!--<div class="row form-group">
+			<label class="col-xs-3">Select Purpose</label>
+			<div class="col-xs-9">
+				<div class="btn-group" uib-dropdown is-open="status2.isopen" style="width: 100%">
+					<button id="records-button" type="button"
+						class="btn btn-default form-control" uib-dropdown-toggle>
+						<span class="pull-left">{{currentStatus.name}}</span>&nbsp;<span
+							class="pull-right caret dropdown_caret_popup_ticketdetails"></span>
+					</button>
+					<ul uib-dropdown-menu role="menu"
+						aria-labelledby="records-button">
+						<li ng-click="currentStatus = {id : 1,name : 'ACTIVE'}"><a>ACTIVE</a></li>
+						<li ng-click="currentStatus = {id : 2,name : 'INACTIVE'}"><a>INACTIVE</a></li>
+						<li ng-click="currentStatus = {id : 3,name : 'DELETE'}"><a>DELETE</a></li>
+					</ul>
+				</div>
+			</div>
+		</div> -->
+
+		<div class="row form-group">
+			<label class="col-xs-3">Comment*</label>
+			<div class="col-xs-9" ng-class="{'has-error': contactFT.comment.$error.required && submitted==true }">
+				<textArea class="form-control" maxlength=500 ng-model="comment" name="comment" required></textArea>
+				<p ng-show="contactFT.comment.$error.required && submitted==true" class="help-block">Comment is required.</p>
+			</div>
+		</div>
+
+		<!--<div class="row form-group">
+			<label class="col-xs-3">Add a Message to Ticket</label>
+			<div class="col-xs-9">
+				<input type="text" class="form-control">
+			</div>
+		</div> -->
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" style="width:20%;" ng-click="ok('CONTACT_FT',$event);">Send Message</button>
+	</div>
+</script>
+ 
+<script type="text/ng-template" id="changeAssignee.html" >
+	<div class="modal-header">
+		<span class="modal-title">Change Assignee<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form>
+		<div class="row form-group">
+			<label class="col-xs-3">Name</label>
+			<div class="col-xs-9">
+				<input type="text" ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/" name="name" class="form-control" ng-model="name" required autofocus>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Comment</label>
+			<div class="col-xs-9">
+				<textarea class="form-control" rows="5"></textarea>
+			</div>
+		</div>
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" style="width:23%;">Change Assignee</button>
+	</div>
+</script>
+ 
+<script type="text/ng-template" id="markAsResolved.html" >
+	<div class="modal-header">
+		<span class="modal-title">Mark As Resolved<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form>
+		<label style="margin-bottom: 21px;">Enter a message and tap “Resolved”</label>
+		<div class="row form-group">
+			<label class="col-xs-3">Comment</label>
+			<div class="col-xs-9">
+				<textarea class="form-control" rows="5"></textarea>
+			</div>
+		</div>
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" style="width:27%;">Mark As Resolved</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="updateStatus/Comments.html" >
+	<div class="modal-header">
+		<span class="modal-title">Update Status/Comments<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form>
+		<label style="margin-bottom: 21px;">Enter a message and tap “Update”</label>
+		<div class="row form-group">
+			<label class="col-xs-3">Comment</label>
+			<div class="col-xs-9">
+				<textarea class="form-control" rows="5"></textarea>
+			</div>
+		</div>
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" style="width:20%;">Update</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="markAsClosed.html" >
+	<div class="modal-header">
+		<span class="modal-title">Mark As Closed<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form>
+		<label style="margin-bottom: 21px;">Enter a message and tap “Closed”</label>
+		<div class="row form-group">
+			<label class="col-xs-3">Comment</label>
+			<div class="col-xs-9">
+				<textarea class="form-control" rows="5"></textarea>
+			</div>
+		</div>
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" style="width:27%;">Closed</button>
+	</div>
+</script>
+<script type="text/ng-template" id="ticketChangeComment.html" >
+	<div class="modal-header">
+		<span class="modal-title">Ticket details changed, Please provide comment.<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form name="comment">
+		<div class="row form-group">
+			<label class="col-xs-3">Comments*</label>
+			<div class="col-xs-9" ng-class="{'has-error': comment.commentTicket.$error.required && submitted==true }">
+				<textarea class="form-control" rows="3" name="commentTicket" ng-model="commentTicket" required></textarea>
+				<p ng-show="comment.commentTicket.$error.required && submitted==true" class="help-block">Comment is required.</p>
+			</div>
+		</div>
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('create_ticket',$event);">Save</button>
+	</div>
+</script>

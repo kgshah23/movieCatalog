@@ -1,0 +1,203 @@
+
+<div class="container-fluid  main_header">
+	<div class="navbar-header">
+		<a class=" navbar-brand main_header_label" 
+			ng-click="tactive=true"> <span><img class="img_logo"  alt="logo"
+				src="core/resources/images/firetweet_logo_1.png"></span>
+			FireTweet
+		</a>
+		
+	</div>
+	<div class="col-xs-5 text-center password_expiration" ng-if="passwordExpiresIn <= 10 && passwordExpiresIn > 1" >Your password will expire in {{passwordExpiresIn}} days. Please reset your password.</div>
+	<div class="col-xs-5 text-center password_expiration" ng-if="passwordExpiresIn == 1" >Your password will expire today. Please reset your password.</div> 
+	 <ul class="navbar-right list-inline user_help" ng-show="isloggedIn">
+	<!--  <li class="pull-left"> Your password will expires in {{passwordExpiresIn}} days. Please reset your password.
+		</li> -->
+		<li><a class="nounderline"><span
+				class="glyphicon glyphicon-user"></span>Welcome </a><!-- <span ng-bind="firstName + ' ' + lastName"></span>
+				</a></li><span>|</span> -->
+		<!--  <li><a ui-sref="login"><span class="glyphicon glyphicon-off"></span>
+				Logout</a></li>-->
+		</li>
+		<li>
+		<div class="btn-group" uib-dropdown>
+				<button id="split-button" type="button" class="user_menu btn user_menu_div"
+					uib-dropdown-toggle>
+					<div class="row">
+						<div class="elipsis col-xs-5  remove_right_padding">
+							<span>{{firstName+' '+ lastName}}</span>
+						</div>
+						<div class="col-xs-5 remove_left_right_padding">
+							({{userType}})
+						 </div>
+						<div class="col-xs-1 remove_left_padding">
+							<span class="caret"></span>
+						</div>
+					</div>
+						
+				</button>
+				<!--  <button type="button" class="btn btn-default" >
+        <span class="caret"></span>
+        <span class="sr-only">Split button!</span>
+      </button> -->
+      <ul uib-dropdown-menu role="menu" class="profile" aria-labelledby="split-button " >
+        <li role="menuitem"  ng-click="open('md','profile.html',profile, getProfile);"><a  class="glyphicon glyphicon-user" > My Profile</a></li>
+        <li role="menuitem" ng-click="logoutCall()"><a class="glyphicon glyphicon-off"> Logout</a></li>
+      </ul>
+    </div>
+    </li>
+	</ul>
+</div>
+
+<script type="text/ng-template" id="profile.html">
+	<div class="modal-header">
+		<span class="modal-title">My Profile<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form name="myProfile" ng-keypress="enterKeyEvent($event,'UPDATE_PROFILE')" ng-init="submitted=false;">
+		<div class="row form-group">
+			<label class="col-xs-3">First Name*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (myProfile.fName.$error.required && submitted==true) || (myProfile.fName.$error.pattern && submitted==true)}">
+				<input type="text" class="form-control elipsis" maxlength=100 name="fName" ng-pattern="/^[a-zA-Z\s]*$/" ng-model="fName" required>
+				<p ng-show="(myProfile.fName.$error.pattern && submitted==true)"  class="help-block">Invalid first name.</p>
+				<p ng-show="(myProfile.fName.$error.required && submitted==true)"  class="help-block">First name is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			
+			<label class="col-xs-3"> Last Name* </label>
+			
+			<div class="col-xs-9" ng-class="{ 'has-error' : (myProfile.lName.$error.required && submitted==true) || (myProfile.lName.$error.pattern && submitted==true) }">
+				<input type="text" maxlength=100 class="form-control elipsis" name="lName" ng-pattern="/^[a-zA-Z\s]*$/" ng-model="lName" required>
+				<p ng-show="(myProfile.lName.$error.required && submitted==true)"  class="help-block">Last name is required.</p>
+				<p ng-show="(myProfile.lName.$error.pattern && submitted==true)"  class="help-block">Invalid last name.</p>
+			</div>		
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3"> New Password</label>
+			<div class="col-xs-9"ng-class="{ 'has-error':(myProfile.newPassword.$error.pattern && submitted==true)   || (myProfile.newPassword.$error.minlength && submitted==true && !myProfile.newPassword.$error.pattern)}" >
+ 				<input type="password" ng-keyup="passwordmatch()" maxlength=100 class="form-control" name="newPassword" ng-model="newPassword" minlength=7 ng-pattern="/^\S*$/">
+				<p ng-show="(myProfile.newPassword.$error.minlength && submitted==true && !myProfile.newPassword.$error.pattern)"  class="help-block">Password must have at least 7 characters.</p>
+				<p ng-show="(myProfile.newPassword.$error.pattern && submitted==true)"  class="help-block">Invalid password.</p>
+		</div>
+		</div>
+		
+		<div class="row form-group">
+			<label class="col-xs-3"> Confirm Password</label>
+			<div class="col-xs-9" ng-class="{ 'has-error':!myProfile.confirmPassword.$valid && submitted==true}">
+				<input type="password" maxlength=100 class="form-control" name="confirmPassword" ng-model="confirmPassword" compare-to="newPassword" ng-required="newPassword.length >= 7 && !myProfile.newPassword.$error.pattern">
+				<p ng-show="myProfile.confirmPassword.$error.required && submitted==true"  class="help-block">Please enter the confirm password.</p>
+				<p ng-show="myProfile.confirmPassword.$error.compareTo && submitted==true && !myProfile.confirmPassword.$error.required "  class="help-block">Passwords do not match.</p>
+			</div>
+		</div>
+		
+		<div class="row form-group">
+			<label class="col-xs-3"> Contact Number</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (myProfile.contact.$error.pattern && submitted==true) || (myProfile.contact.$error.minlength && submitted==true) }">
+				<input type="text" ng-pattern="/^[1-9][0-9]{0,2}(?:,?[0-9]{3}){0,3}(?:\.[0-9]{1,2})?$/" minlength=10 maxlength=16 class="form-control" name="contact" ng-model="contact">
+				<p ng-show="(myProfile.contact.$error.pattern && submitted==true)"  class="help-block">Invalid contact.</p>	
+				<p ng-show="(myProfile.contact.$error.minlength && submitted==true && !myProfile.contact.$error.pattern)"  class="help-block">Contact number must have at least 10 digits.</p>	
+		</div>
+		</div>
+
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('UPDATE_PROFILE')">Save</button>
+	</div>
+	</script>
+	
+
+	
+
+
+<nav class="navbar navbar-default" role="navigation">
+	<div class="dashboard_tabs_container">
+		<div class="navbar-header"></div>
+		<uib-tabset justified="true"
+			class="dashboard_tabs collapse navbar-collapse"
+			ng-class="!navCollapsed && 'in'"> <uib-tab active=isActive('/dashboard/tickets')
+			ui-sref="common.dashboard.tickets" > <uib-tab-heading>
+		 <img  alt="logo" class="ticketLogo" src="core/resources/images/Tickets.png"> Tickets </uib-tab-heading>
+		<ul id="dashboard" class="tab-pane fade in active list-inline">
+			<li><a ui-sref="common.dashboard.tickets" class="subtabs" ui-sref-active="myactive">My Tickets</a></li>
+			<li ng-show="isFTAdmin || isFTSupervisor ||isFTOperator"><a ui-sref="common.dashboard.tickets.eventtickets" class="subtabs" ui-sref-active="myactive">Event Tickets</a></li>
+			<li ng-show="isFTAdmin || isFTSupervisor ||isFTOperator"><a ui-sref="common.dashboard.tickets.servicetickets" class="subtabs" ui-sref-active="myactive">Service Tickets</a></li>
+		</ul>
+		</uib-tab> 
+
+		<uib-tab ui-sref="common.dashboard.customers" ng-show="isFTAdmin || isFTSupervisor || isFTCR"  active=isActive('/dashboard/customers')>
+		<uib-tab-heading>
+		<span ng-show="isFTAdmin || isFTSupervisor || isFTCR"><img  alt="logo" id="custLogo" src="core/resources/images/customers_icon.png"> Customers </span> 
+			 </uib-tab-heading>
+			<ui-breadcrumbs
+				displayname-property="data.displayName"
+				template-url="core/resources/js/Common/templates/uiBreadcrumbs.tpl.html">
+		</ui-breadcrumbs>
+		</uib-tab>
+			<uib-tab ui-sref="common.dashboard.customerdetails({id:customerId, name :customername})" ng-show="isCustomerAdmin || isCL2 || isCL3"  active=isActive('/dashboard/customer')>
+		<uib-tab-heading>
+		<span> <i class="glyphicon glyphicon-user"></i> Customer</span>
+			 </uib-tab-heading>
+			<ui-breadcrumbs ng-show="isCustomerAdmin || isCL2 || isCL3"
+				displayname-property="data.displayName"
+				template-url="core/resources/js/Common/templates/uiBreadcrumbs.tpl.html">
+		</ui-breadcrumbs>
+		</uib-tab>
+		<uib-tab ui-sref="common.dashboard.franchise" ng-show="isFTAdmin || isFTSupervisor " active=isActive('/dashboard/franchise')>
+		<uib-tab-heading> 
+		<span ng-show="isFTAdmin || isFTSupervisor "><img  alt="logo" id="custLogo" src="core/resources/images/customers_icon.png"> Franchisees </span> 
+		 </uib-tab-heading>
+			<ui-breadcrumbs ng-hide="isFranchiseAdmin || isFL2"
+				displayname-property="data.displayName"
+				template-url="core/resources/js/Common/templates/uiBreadcrumbs.tpl.html">
+		</ui-breadcrumbs>
+		</uib-tab>
+		<uib-tab ui-sref="common.dashboard.franchisedetails({id:franchiseeId, name :franchiseename})" ng-show="isFranchiseAdmin || isFL2" active=isActive('/dashboard/franchise')>
+		<uib-tab-heading> 
+		<span> <i class="glyphicon glyphicon-user"></i> Franchisee</span>
+		 </uib-tab-heading>
+			<ui-breadcrumbs  ng-show="isFranchiseAdmin || isFL2"
+				displayname-property="data.displayName"
+				template-url="core/resources/js/Common/templates/uiBreadcrumbs.tpl.html">
+		</ui-breadcrumbs>
+		</uib-tab>
+		 <uib-tab ng-show="isFTInstaller" ui-sref="common.dashboard.sites"  active=isActive('/dashboard/sites')>
+		<uib-tab-heading> <i
+			class="glyphicon glyphicon-map-marker"></i>Sites</uib-tab-heading>
+			<ui-breadcrumbs
+				displayname-property="data.displayName"
+				template-url="core/resources/js/Common/templates/uiBreadcrumbs.tpl.html">
+		</ui-breadcrumbs>
+		</uib-tab>
+		
+		<uib-tab ng-show="isFTAdmin || isFTSupervisor || isFTOperator || isCustomerAdmin || isCL2 || isCL3" ui-sref="common.dashboard.reports" active=isActive('/dashboard/reports')>
+		<uib-tab-heading> 
+		 <img  alt="logo" class="reportLogo" src="core/resources/images/Reports.png">Reports </uib-tab-heading>
+		<ul class="tab-pane fade in active  list-inline">
+			<li><a>Reports</a></li>
+		</ul>
+		</uib-tab> <uib-tab ui-sref="common.dashboard.admin" ng-show="isAdmin" active=isActive('/dashboard/admin')>
+		<uib-tab-heading> <i
+			class="glyphicon glyphicon-user"></i> Admin </uib-tab-heading>
+		<ul id="dashboard" class="tab-pane fade in active list-inline">
+			<li><a ng-hide="isCustomerAdmin || isFranchiseAdmin || isFTSupervisor" class="subtabs" ui-sref="common.dashboard.admin" ui-sref-active="myactive">Manage Customers</a></li>
+			<li><a class="subtabs" ng-hide="isCustomerAdmin || isFranchiseAdmin " ui-sref="common.dashboard.admin.franchisee" ui-sref-active="myactive">Manage Franchisee</a></li>
+			<li><a ui-sref="common.dashboard.admin.users" class="subtabs"  ui-sref-active="myactive">Manage Users</a></li>
+			<!-- <li><a ng-hide="isCustomerAdmin || isFranchiseAdmin " class="subtabs" ng-disabled="true">Manage Ticket Settings</a></li> -->
+		</ul>
+		</uib-tab> <uib-tab ng-hide="isCustomerAdmin || isFranchiseAdmin || isFTOperator || isFTInstaller  || isFTCR || isCL2 || isCL3 || isFL2"  ui-sref="common.dashboard.inventory" active=isActive('/dashboard/inventory')>
+		<uib-tab-heading> <i
+			class="glyphicon glyphicon-list"></i> Inventory</uib-tab-heading>
+		<ul id="dashboard"
+			class="sub_headers_background tab-pane fade in active list-inline sub_headers">
+			<li><a ui-sref="common.dashboard.inventory" ui-sref-active="myactive">Allotted Items</a></li>
+			<li><a ui-sref="common.dashboard.inventory.unallotted" ui-sref-active="myactive">Unallotted Items</a></li>
+		</ul>
+		</uib-tab> </uib-tabset>
+	</div>
+</nav>
+

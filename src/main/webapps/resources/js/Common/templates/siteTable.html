@@ -1,0 +1,272 @@
+
+<!-- <div class="subheaderDiv ">
+			<h5 class="subheaderCustomer ">
+				<a ng-click="collapsedSites()"><i id="up"
+					ng-show="iscollapsedSites" class="glyphicon glyphicon-menu-up"></i><i
+					class="glyphicon glyphicon-menu-down" id="down"
+					ng-show="!iscollapsedSites"></i></a> Sites
+			</h5> -->
+			<div  ng-controller="siteTableCtrl">
+		<h5 class="subheaderCustomer" ng-show="isFTInstaller">
+				 Sites
+			</h5>
+	<div class="table-responsive">
+		<table class="table table-striped">
+
+			<thead>
+				<th>Site Name</th>
+				<th>Total Open Tickets</th>
+				<th>Stage</th>
+			<!-- 	<th>Contract Expiry Date</th> -->
+				<th>Date Added</th>
+				<th>Last Preventive Maintenance Date</th>
+				<th>Next Preventive Maintenance Date</th>
+				<th class="inventory_column">Inventory</th>
+				<th>Status</th>
+				<th ng-hide="disableAddSiteBtn" class="actions_column">Actions</th>
+			</thead>
+			<tbody>
+				<tr dir-paginate="site in sites | itemsPerPage: countPerPage"
+					total-items="totalSites" current-page="pagination.current">
+					<td><a ng-if="!isfranchiseePage && isFTUsers "
+						ui-sref='common.dashboard.franchise.franchisedetails.sitedetails({siteid : site.id,sitename :site.name})'>{{site.name}}</a>
+						<a ng-if="!isfranchiseePage && !isFTUsers"
+						ui-sref='common.dashboard.franchisedetails.sitedetails({siteid : site.id,sitename :site.name})'>{{site.name}}</a>
+						<a ng-if="!isCustomerPage && isFTUsers"
+						ui-sref='common.dashboard.customers.customerdetails.sitedetails({siteid : site.id,sitename :site.name})'>{{site.name}}</a>
+						<a ng-if="!isCustomerPage && !isFTUsers"
+						ui-sref='common.dashboard.customerdetails.sitedetails({siteid : site.id,sitename :site.name})'>{{site.name}}</a>
+						<a ng-if="isFTInstaller"
+						ui-sref='common.dashboard.sites.sitedetails({siteid : site.id,sitename :site.name})'>{{site.name}}</a>
+					</td>
+					<td>{{site.openTickets}}</td>
+					<td>{{getSiteStage(site.siteStage).name}}</td>
+					<!-- <td>{{site.contractExpiryDate | date:'dd/MM/yyyy'}}</td> -->
+					<td>{{site.createdDate | date:'dd/MM/yyyy'}}</td>
+					<td>{{site.lastPreventiveMaintDate | date:'dd/MM/yyyy'}}</td>
+					<td>{{site.nextPreventiveMaintDate | date:'dd/MM/yyyy'}}</td>
+					<td ng-if="!site.inventory.length">-</td>
+					<td ng-if="site.inventory.length"><div style="display:inline-block;"
+						ng-repeat="inventory in site.inventory">
+							{{inventory.name.split(' ')[0]}} : {{inventory.count}} &nbsp;</div></td>
+					<td>{{getSiteStatus(site.status)}}</td>
+					<td ng-hide="disableAddSiteBtn">
+						<button ng-disabled="disableAddSiteBtn == true"
+							ng-click="open('md','editSite.html',site,getSitesList,$event);"
+							class="btn btn-default">
+							<span class="glyphicon glyphicon-edit"></span>Edit
+						</button>
+						<button ng-disabled="disableAddSiteBtn"
+							ng-click="open('md','deleteSite.html',site,getSitesList,$event);"
+							class="btn btn-default margin_left_2perc">
+							<span class="glyphicon glyphicon-trash"></span>Delete
+						</button>
+					</td>
+
+				</tr>
+				<tr ng-show="!sites.length">
+					<!-- <td  ng-show = "isFTInstaller || isFranchiseePage" colspan="9" class="text-center">No Records Found</td> -->
+					<td colspan="10" class="text-center">No Records Found</td>
+				</tr>
+			</tbody>
+
+		</table>
+	</div>
+	<!-- </div> -->
+				<button type="button" class="customerBtn btn btn-default"
+				ng-click="open('md','addNewSite.html',{id:id},refreshSitesTable,$event);" ng-hide="!isfranchiseePage || disableAddSiteBtn">
+				<span class="glyphicon glyphicon-plus"></span>Add New Site</button>
+			<button  csv-header="csvHeaders" ng-csv="csvSites" filename="sites.csv"  ng-if="!isfranchiseePage || disableAddSiteBtn" type="button"
+				class="customerBtn btn-default btn" ng-click=""><span class="glyphicon glyphicon-export"></span>Export to CSV</button>
+				<button  csv-header="csvHeaders" ng-csv="csvSites" filename="sites.csv" ng-if="isfranchiseePage && !disableAddSiteBtn" style="margin-left: 20px;" type="button"
+				class="customerBtn btn-default btn" ng-click=""><span class="glyphicon glyphicon-export"></span>Export to CSV</button>
+			<dir-pagination-controls on-page-change="getSitesList();"  
+				template-url="/core/resources/js/Common/templates/dirPagination.html"></dir-pagination-controls>
+		
+		</div>
+		
+		
+		<!--  ADD NEW SITE POPUP -->
+	<script type="text/ng-template" id="addNewSite.html">
+	<div class="modal-header">
+		<span class="modal-title">Add New Site<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span></span>
+	</div>
+	<div class="modal-body">
+		<form  name="addNewSite" ng-keypress="enterKeyEvent($event,'ADD_SITE')" ng-init="submitted=false;">
+		<div class="row form-group">
+			<label class="col-xs-3">Site Name*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewSite.name.$error.pattern && submitted==true)  || (addNewSite.name.$error.required && submitted==true) }">
+				<input type="text" maxlength=100 name="name" class="form-control elipsis" ng-model="name" ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/" required autofocus>
+				<p ng-show="(addNewSite.name.$error.pattern && submitted==true)"  class="help-block">Invalid name.</p>
+				<p ng-show="(addNewSite.name.$error.required && submitted==true)"  class="help-block">Name is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Address 1*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : addNewSite.address1.$error.required && submitted==true }">
+				<input type="text" maxlength=256 name="address1" class="form-control" ng-model="address1" required autofocus>
+				<p ng-show="addNewSite.address1.$error.required && submitted==true"  class="help-block">Primary address is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Address 2</label>
+			<div class="col-xs-9">
+				<input type="text" maxlength=256 name="address2" class="form-control" ng-model="address2" autofocus>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">City*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewSite.city.$error.pattern && submitted==true) || (addNewSite.city.$error.required && submitted==true) }">
+				<input type="text" maxlength=32 name="city" class="form-control" ng-model="city" ng-pattern="/^[a-zA-Z\s]*$/"  required autofocus>
+				<p ng-show="(addNewSite.city.$error.pattern && submitted==true)"  class="help-block">Invalid city.</p>
+				<p ng-show="(addNewSite.city.$error.required && submitted==true)"  class="help-block">City is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">State*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewSite.state.$error.pattern && submitted==true) || (addNewSite.state.$error.required && submitted==true) }">
+				<input type="text"  maxlength=32 name="state" class="form-control" ng-model="state" ng-pattern="/^[a-zA-Z\s]*$/" required autofocus>
+				<p ng-show="(addNewSite.state.$error.pattern && submitted==true)"  class="help-block">Invalid state.</p>
+				<p ng-show="(addNewSite.state.$error.required && submitted==true)"  class="help-block">State is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3"> Pincode*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (addNewSite.pincode.$error.pattern && submitted==true) || (addNewSite.pincode.$error.minlength && submitted==true && !addNewSite.pincode.$error.pattern) || (addNewSite.pincode.$error.required && submitted==true)}">
+				<input type="text" class="form-control" name="pincode" ng-pattern="/^[0-9]*$/" ng-model="pincode" minlength=6 maxlength=6 required>
+				<p ng-show="(addNewSite.pincode.$error.pattern && submitted==true)"  class="help-block">Invalid pincode.</p>
+				<p ng-show="(addNewSite.pincode.$error.minlength && submitted==true && !addNewSite.pincode.$error.pattern)"  class="help-block">Pincode must have only 6 digits.</p>
+				<p ng-show="(addNewSite.pincode.$error.required && submitted==true)"  class="help-block">Pincode is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Country*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : addNewSite.country.$invalid && !addNewSite.country.$pristine }">
+				<select class='form-control' name="country" ng-model="country" autofocus>
+					<option value ={{country}} ng-repeat='country in countries'>{{country}}</option>
+				</select>
+				<p ng-show="addNewSite.country.$invalid && !addNewSite.country.$pristine"  class="help-block">Country is required.</p>
+			</div>
+		</div>
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button"  ng-click="ok('ADD_SITE')">Add</button>
+	</div>
+</script>
+
+<!--  EDIT SITE POPUP -->
+
+<script type="text/ng-template" id="editSite.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Edit Site - {{name}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+	</div>
+	<div class="modal-body">
+		<form  name="editSite" ng-keypress="enterKeyEvent($event,'EDIT_SITE')" ng-init="submitted=false;">
+		<div class="row form-group">
+			<label class="col-xs-3">Site Name*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (editSite.name.$error.pattern && submitted==true) || (editSite.name.$error.required && submitted==true)}">
+				<input type="text" maxlength=100 name="name" class="form-control elipsis" ng-model="name" ng-disabled="true" ng-pattern="/^[A-Za-z0-9\s- _ &@']*$/"  required>
+				<p ng-show="(editSite.name.$error.pattern && submitted==true)"  class="help-block">Invalid name.</p>
+				<p ng-show="(editSite.name.$error.required && submitted==true)"  class="help-block">Name is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Address 1*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : editSite.address1.$error.required && submitted==true }">
+				<input type="text" maxlength=256 name="address1" class="form-control" ng-model="address1" required autofocus>
+				<p ng-show="editSite.address1.$error.required && submitted==true"  class="help-block">Primary address is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Address 2</label>
+			<div class="col-xs-9">
+				<input type="text" maxlength=256 name="address2" class="form-control" ng-model="address2">
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">City*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (editSite.city.$error.pattern && submitted==true) || (editSite.city.$error.required && submitted==true)}">
+				<input type="text" maxlength=32 name="city" class="form-control" ng-model="city" ng-pattern="/^[a-zA-Z\s]*$/" required>
+				<p ng-show="(editSite.city.$error.pattern && submitted==true)"  class="help-block">Invalid city.</p>
+				<p ng-show="(editSite.city.$error.required && submitted==true)"  class="help-block">City is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">State*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (editSite.state.$error.pattern && submitted==true) || (editSite.state.$error.required && submitted==true)}">
+				<input type="text" maxlength=32 name="state" class="form-control" ng-model="state" ng-pattern="/^[a-zA-Z\s]*$/" required>
+				<p ng-show="(editSite.state.$error.pattern && submitted==true)"  class="help-block">Invalid state.</p>
+				<p ng-show="(editSite.state.$error.required && submitted==true)"  class="help-block">State is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3"> Pincode*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : (editSite.pincode.$error.pattern && submitted==true) || (editSite.pincode.$error.minlength && submitted==true) || (editSite.pincode.$error.required && submitted==true)}">
+				<input type="text"  name="pincode" ng-pattern="/^[0-9]*$/"  class="form-control" ng-model="pincode" minlength=6 maxlength=6 required>
+				<p ng-show="(editSite.pincode.$error.pattern && submitted==true)"  class="help-block">Invalid pincode.</p>
+				<p ng-show="(editSite.pincode.$error.minlength && submitted==true && !editSite.pincode.$error.pattern)"  class="help-block">Pincode must have only 6 digits.</p>
+				<p ng-show="(editSite.pincode.$error.required && submitted==true)"  class="help-block">Pincode is required.</p>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-xs-3">Country*</label>
+			<div class="col-xs-9" ng-class="{ 'has-error' : editSite.country.$invalid && !editSite.country.$pristine }">
+				<select class='form-control' name="country" ng-model="country" autofocus>
+					<option value ={{country}} ng-repeat='country in countries'>{{country}}</option>
+				</select>
+				<p ng-show="editSite.country.$invalid && !editSite.country.$pristine"  class="help-block">Country is required.</p>
+			</div>
+		</div>
+	</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('EDIT_SITE')">Save</button>
+	</div>
+</script>
+
+<!--  DELETE SITE POPUP -->
+
+<script type="text/ng-template" id="deleteSite.html">
+	<div class="modal-header">
+		<div class="row">
+			<div class="col-xs-10 pull-left elipsis">
+				<span class="modal-title" >Delete Site - {{data.data.name}}</span>
+			</div>
+			<div class="col-xs-2 modal-title pull-right ">
+				<span ng-click="cancel()" class="glyphicon glyphicon-remove pull-right" ></span>
+			</div>
+		</div>
+		
+	</div>
+	<form name="deleteUser" ng-init="submitted=false;">
+	<div class="modal-body">
+		Do you really want to delete?
+	</div>
+	<div class="modal-footer">
+		<button style="width:12%" class="btn btn-default" type="button" ng-click="cancel()">No</button>
+		<button class="btn btn-primary" type="button" ng-click="ok('DELETE_SITE')">Yes</button>
+	</div>
+	</form>
+</script>
